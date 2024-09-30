@@ -1,0 +1,82 @@
+// 動作確認
+if GET_UWSC_NAME == 'scrapers.uws' then
+    if f := FeedScraper.starwalk('https://webcomicgamma.takeshobo.co.jp/manga/starwalk/') then
+        f.print()
+    else
+        print '更新なし'
+    endif
+endif
+
+
+class Feed
+    public title
+    public url
+    public summary
+    public updated
+    // constructor
+    procedure Feed(title, url, summary)
+        this.title = title
+        this.url = url
+        this.summary = summary
+        now = gettime()
+        this.updated = format(now, '%+')
+    fend
+    procedure print()
+        print "<#title><#CR><#url><#CR><#summary>"
+    fend
+
+endclass
+
+module FeedScraper
+    const HEADLESS = FALSE
+    const MANGA_FEED_PROFILE_DIR = 'D:\manga_feed\profile\'
+    // const ERROR_LOG = 'D:\manga_feed\error.log'
+    dim browser
+    // constructor
+    procedure FeedScraper
+        browser = browserbuilder(BC_MSEDGE)_
+            .headless(HEADLESS)_
+            .profile(MANGA_FEED_PROFILE_DIR)_
+            .start()
+    fend
+
+    // スターウォーク 金曜12時
+    function starwalk(url)
+        const key = 'スターウォーク'
+        result = EMPTY
+
+        tab = browser.new(url)
+        try
+            link = tab.document.querySelector('div.read__outer a')
+            selend_ = 0
+            if check(key, link.id) then
+                title = trim( link.querySelector('.episode').textContent )
+                selend_ = 0
+                summary = '公開日: ' + link.querySelector('.episode__text').textContent
+                selend_ = 0
+                result = Feed(title, link.href, summary)
+                update(key, link.id)
+            endif
+        except
+            result = Feed('[解析エラー] スターウォーク', url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        endtry
+        tab.close()
+    fend
+
+    const ini = 'manga_feed.ini'
+    const section = 'manga_feed'
+
+    function check(key, value)
+        recent = readini(section, key, ini)
+        result = value != recent
+    fend
+
+    procedure update(key, value)
+        writeini(section, key, value, ini)
+    fend
+
+    // procedure error(msg)
+    //     fid = fopen(ERROR_LOG, F_WRITE8 or F_AUTOCLOSE)
+    //     fput(fid, msg)
+    // fend
+endmodule

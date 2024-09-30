@@ -1,0 +1,128 @@
+
+call scrapers.uws
+
+hash scrapers
+    スターウォーク = Scraper('https://webcomicgamma.takeshobo.co.jp/manga/starwalk/', G_WEEKDAY_FRI, 12, FeedScraper.starwalk)
+endhash
+
+while TRUE
+    gettime()
+    for key in scrapers
+        if scrapers[key].check(G_TIME_WW, G_TIME_HH) then
+            if feed := scraper[key].scrape() then
+                Atom.add(feed)
+            endif
+        endif
+    next
+    Atom.deploy()
+
+    repeat
+        sleep(300)
+        gettime()
+    until 0 <= G_TIME_NN and G_TIME_NN <= 5 // n時0分から5分の間になるまで待つ
+
+wend
+
+class Atom
+    const filename = "feed.xml"
+    dim updated = FALSE
+    dim xml
+    procedure Atom()
+        xml = createoleobj("Msxml2.DOMDocument")
+        if fopen(filename, F_EXISTS) then
+            xml.load(filename)
+        else
+            xml.loadXML(atom_template)
+        endif
+
+    fend
+
+
+    // xmlに追加
+    procedure add(feed: Feed)
+        e = new_entry(feed)
+        xml.appendChild(e)
+
+        updated = TRUE
+    fend
+
+    // githubにpush
+    function deploy(variables)
+        if updated then
+            updated = FALSE
+
+            result = 0
+        endif
+    fend
+
+    function new_entry(feed: Feed)
+        result = xml.createElement('entry')
+        id = xml.createElement('id')
+        id.text = feed.url
+        result.appendChild(id)
+        title = xml.createElement('title')
+        title.text = feed.title
+        result.appendChild(title)
+        link = xml.createElement('link')
+        link.setAttribute('rel', 'alternate')
+        link.setAttribute('type', 'text/html')
+        link.setAttribute('href', feed.url)
+        result.appendChild(link)
+        updated = xml.createElement('updated')
+        updated.text = feed.updated
+        result.appendChild(updated)
+        summary = xml.createElement('summary')
+        summary.text = feed.summary
+        result.appendChild(summary)
+    fend
+
+endclass
+
+
+class Scraper
+    // スクレイピング対象ページ
+    dim url
+    // 曜日
+    dim day
+    // 時刻
+    dim time
+    // スクレイピング用関数
+    dim fn
+    // constructor
+    procedure Scraper(url: string, day: number, time: number, fn: func)
+        this.url = url
+        this.day = day
+        this.time = time
+        this.fn = fn
+    fend
+
+    // 指定時刻かどうか
+    function check(d, h)
+        result = day == d and h >= time and time < h + 1
+    fend
+
+    // fn はFeedを返す
+    function scrape()
+        result = fn(this.url)
+    fend
+endclass
+
+textblock atom_template
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom' xml:lang='ja'>
+    <id>tag:manga_feed/</id>
+    <title>Webまんがフィード</title>
+    <updated></updated>
+    <link rel='self' type='application/atom+xml' href='' />
+</feed>
+endtextblock
+
+textblock entry_template
+<entry>
+    <id></id>
+    <title></title>
+    <link rel='alternate' type='text/html' href='' />
+    <updated></updated>
+    <summary></summary>
+</entry>
+endtextblock
