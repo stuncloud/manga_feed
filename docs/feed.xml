@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+	<id>tag:manga_feed/</id>
+	<title>Webまんがフィード</title>
+	<updated>2024-10-12T14:44:35+09:00</updated>
+	<link rel="self" type="application/atom+xml" href=""/>
+	<entry xmlns="">
+		<id>https://webcomicgamma.takeshobo.co.jp/_files/starwalk/004_2/</id>
+		<title>第4話② ある文明の記録</title>
+		<link rel="alternate" type="text/html" href="https://webcomicgamma.takeshobo.co.jp/_files/starwalk/004_2/"/>
+		<updated>2024-10-12T14:44:32+09:00</updated>
+		<summary>公開日: 2024年8月 2日</summary>
+	</entry>
+	<entry xmlns="">
+		<id>https://to-ti.in/story/kodama28</id>
+		<title>28.「シャドー イン トランスレーション」</title>
+		<link rel="alternate" type="text/html" href="https://to-ti.in/story/kodama28"/>
+		<updated>2024-10-12T14:44:35+09:00</updated>
+		<summary>'24/09/03 UPDATE</summary>
+	</entry>
+</feed>
