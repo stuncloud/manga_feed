@@ -35,42 +35,33 @@ channel = @{
     "description": "Webまんがフィードを自力で作っていくやつ",
     "items": null
 }@
-const out_xml = "docs/index.xml"
+const out_xml = "docs\index.xml"
 const log_file = "manga_feed.log"
 
 while TRUE
-    // dim atom = Atom()
-    // dim rss2 = RSS2()
     gettime()
     items = []
     for key in scrapers
-        // if scrapers[key].check(G_TIME_WW, G_TIME_HH) then
+        if scrapers[key].check(G_TIME_WW, G_TIME_HH) then
             if item := scrapers[key].scrape() then
                 print "<#key> が更新されました"
-                // atom.add(feed)
-                // rss2.add(feed)
                 items += item
             endif
-        // endif
+        endif
     next
-    // atom.deploy()
-    // atom = NOTHING
-    // rss2.deploy()
-    // rss2 = NOTHING
     if length(items) > 0 then
         items_str = join(items, ", ")
-        print items_str
         channel.items = @[<#items_str>]@
         channel.pubDate = items[0].pubDate
 
         error = format(chr(0), 512)
-        if ! (hoge := generate("<#channel>", out_xml, error)) then
-            fopen(log_file, F_APPEND, error)
+        if generate("<#channel>", out_xml, error) then
+            push_to_github(out_xml, length(items))
+        else
+            log = format(gettime(), "%F %T") + ": <#error>"
+            fopen(log_file, F_APPEND, log)
         endif
-        print hoge
     endif
-
-exit
 
     repeat
         sleep(300)
@@ -79,8 +70,10 @@ exit
 
 wend
 
-procedure push_to_github()
-
+procedure push_to_github(xml, cnt)
+    doscmd("git add <#xml>")
+    doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
+    doscmd("git push")
 fend
 
 
