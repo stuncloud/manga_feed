@@ -1,20 +1,76 @@
 
+def_dll generate(wstring, wstring, var wstring):bool:rssgen\target\release\rssgen.dll
+
 call scrapers.uws
 
-hash scrapers
-    スターウォーク = Scraper('https://webcomicgamma.takeshobo.co.jp/manga/starwalk/', G_WEEKDAY_FRI, 12, FeedScraper.starwalk)
+enum WeekDay
+    Mon = 1
+    Tue = 2
+    Wed = 4
+    Thu = 8
+    Fri = 16
+    Sat = 32
+    Sun = 64
+endenum
+hash public convert_weekday
+    "<#G_WEEKDAY_MON>" = WeekDay.Mon
+    "<#G_WEEKDAY_TUE>" = WeekDay.Tue
+    "<#G_WEEKDAY_WED>" = WeekDay.Wed
+    "<#G_WEEKDAY_THU>" = WeekDay.Thu
+    "<#G_WEEKDAY_FRI>" = WeekDay.Fri
+    "<#G_WEEKDAY_SAT>" = WeekDay.Sat
+    "<#G_WEEKDAY_SUN>" = WeekDay.Sun
 endhash
 
+
+hash scrapers
+    スターウォーク = Scraper(StarWalk(), WeekDay.Fri, 12)
+    児玉まりあ文学集成 = Scraper(KodamaMaria(), WeekDay.Sun, 0)
+endhash
+
+channel = @{
+    "title": "Webまんがフィード",
+    "link": "https://github.com/stuncloud/manga_feed",
+    "pubDate": null,
+    "description": "Webまんがフィードを自力で作っていくやつ",
+    "items": null
+}@
+const out_xml = "docs/index.xml"
+const log_file = "manga_feed.log"
+
 while TRUE
+    // dim atom = Atom()
+    // dim rss2 = RSS2()
     gettime()
+    items = []
     for key in scrapers
-        if scrapers[key].check(G_TIME_WW, G_TIME_HH) then
-            if feed := scraper[key].scrape() then
-                Atom.add(feed)
+        // if scrapers[key].check(G_TIME_WW, G_TIME_HH) then
+            if item := scrapers[key].scrape() then
+                print "<#key> が更新されました"
+                // atom.add(feed)
+                // rss2.add(feed)
+                items += item
             endif
-        endif
+        // endif
     next
-    Atom.deploy()
+    // atom.deploy()
+    // atom = NOTHING
+    // rss2.deploy()
+    // rss2 = NOTHING
+    if length(items) > 0 then
+        items_str = join(items, ", ")
+        print items_str
+        channel.items = @[<#items_str>]@
+        channel.pubDate = items[0].pubDate
+
+        error = format(chr(0), 512)
+        if ! (hoge := generate("<#channel>", out_xml, error)) then
+            fopen(log_file, F_APPEND, error)
+        endif
+        print hoge
+    endif
+
+exit
 
     repeat
         sleep(300)
@@ -23,87 +79,255 @@ while TRUE
 
 wend
 
-class Atom
-    const filename = "feed.xml"
-    dim updated = FALSE
-    dim xml
-    procedure Atom()
-        xml = createoleobj("Msxml2.DOMDocument")
-        if fopen(filename, F_EXISTS) then
-            xml.load(filename)
-        else
-            xml.loadXML(atom_template)
-        endif
+procedure push_to_github()
 
+fend
+
+
+class XMLWrapper
+    dim document
+    procedure XMLWrapper(xml_text)
+        document = createoleobj("Msxml2.DOMDocument")
+        if ! document.loadXML(xml_text) then
+            raise('XMLの読み込みに失敗', 'XMLWrapper')
+        endif
     fend
 
+    dim prettify = function()
+        // MXXMLWriterの書き出し先
+        stream = createoleobj("ADODB.Stream")
+        stream.Charset = 'utf-8'
+        stream.Type = 2
+        stream.Open()
+        // SAXXMLReaderでparseしたXMLをstreamに書き込む
+        writer = createoleobj("MSXML2.MXXMLWriter")
+        writer.indent = TRUE
+        writer.encoding = 'utf-8'
+        writer.byteOrderMark = FALSE
+        writer.output = stream
+        // XMLをパースする
+        reader = createoleobj("MSXML2.SAXXMLReader")
+        reader.contentHandler = writer
+        reader.dtdHandler = writer
+        reader.errorHandler = writer
+
+        reader.parse(document.xml)
+
+        // result = writer.output
+        // result = replace(result, '<?xml version="1.0" encoding="UTF-16" standalone="no"?>', '<?xml version="1.0" encoding="UTF-8"?>')
+
+        // 位置を戻す
+        stream.Position = 0
+        // テキストとして読み出す
+        result = stream.ReadText(stream.Size)
+    fend
+
+    procedure save(path)
+        fid = fopen(path, F_WRITE8 or F_AUTOCLOSE)
+        pretty_xml = this.prettify()
+        fput(fid, pretty_xml, F_ALLTEXT)
+    fend
+
+    function create_element(name)
+        result = document.createElement(name)
+    fend
+
+    function get_node(xpath)
+        result = document.selectSingleNode(xpath)
+    fend
+
+    function create_cdata(data)
+        result = document.createCDATASection(data)
+    fend
+
+endclass
+
+
+class Atom
+    const filename = "index.xml"
+    dim updated = FALSE
+    dim xml
+    dim path
+    procedure Atom()
+        path = "<#GET_CUR_DIR>\docs\<#filename>"
+        if fopen(filename, F_EXISTS) then
+            fid = fopen(path, F_READ or F_AUTOCLOSE)
+            xml = XMLWrapper(fget(fid, F_ALLTEXT))
+        else
+            xml = XMLWrapper(atom_template)
+        endif
+    fend
+
+    procedure save()
+        xml.save(path)
+    fend
 
     // xmlに追加
     procedure add(feed: Feed)
         e = new_entry(feed)
-        xml.appendChild(e)
+        node = xml.get_node('//feed')
+        node.appendChild(e)
 
         updated = TRUE
     fend
 
-    // githubにpush
-    function deploy(variables)
-        if updated then
-            updated = FALSE
+    procedure set_updated()
+        now = format(gettime(), '%+')
+        node = xml.get_node('//feed/updated')
+        node.text = now
+    fend
 
+    // githubにpush
+    function deploy()
+        if updated then
+            set_updated()
+            save()
+            updated = FALSE
+            push_to_github()
             result = 0
         endif
     fend
 
     function new_entry(feed: Feed)
-        result = xml.createElement('entry')
-        id = xml.createElement('id')
+        result = xml.create_element('entry')
+        id = xml.create_element('id')
         id.text = feed.url
         result.appendChild(id)
-        title = xml.createElement('title')
+        title = xml.create_element('title')
         title.text = feed.title
         result.appendChild(title)
-        link = xml.createElement('link')
+        link = xml.create_element('link')
         link.setAttribute('rel', 'alternate')
         link.setAttribute('type', 'text/html')
         link.setAttribute('href', feed.url)
         result.appendChild(link)
-        updated = xml.createElement('updated')
+        updated = xml.create_element('updated')
         updated.text = feed.updated
         result.appendChild(updated)
-        summary = xml.createElement('summary')
+        summary = xml.create_element('summary')
         summary.text = feed.summary
         result.appendChild(summary)
     fend
 
 endclass
 
+class RSS2
+    const filename = "index.xml"
+    dim updated = FALSE
+    dim xml
+    dim path
+    procedure RSS2()
+        path = "<#GET_CUR_DIR>\docs\<#filename>"
+        if fopen(filename, F_EXISTS) then
+            fid = fopen(path, F_READ or F_AUTOCLOSE)
+            xml = XMLWrapper(fget(fid, F_ALLTEXT))
+        else
+            xml = XMLWrapper(rss2_template)
+        endif
+    fend
+
+    procedure save()
+        xml.save(path)
+    fend
+
+    // xmlに追加
+    procedure add(feed: Feed)
+        item = new_item(feed)
+        node = xml.get_node('//rss/channel')
+        node.appendChild(item)
+
+        updated = TRUE
+    fend
+
+    procedure set_updated()
+        node = xml.get_node('//rss/channel/pubDate')
+        node.text = as_pubdate(gettime())
+    fend
+
+    // githubにpush
+    function deploy()
+        if updated then
+            set_updated()
+            save()
+            updated = FALSE
+
+            push_to_github()
+            result = 0
+        endif
+    fend
+
+    function new_item(feed: Feed)
+        result = xml.create_element('item')
+        title = xml.create_element('title')
+        title.text = feed.title
+        result.appendChild(title)
+        link = xml.create_element('link')
+        link.text = feed.url
+        result.appendChild(link)
+        description = xml.create_element('description')
+        cdata = xml.create_cdata(feed.summary)
+        description.appendChild(cdata)
+        result.appendChild(description)
+        result.appendChild(link)
+        pubDate = xml.create_element('pubDate')
+        pubDate.text = as_pubdate(feed.updated)
+        result.appendChild(pubDate)
+        print result.xml
+        id = getid(GET_LOGPRINT_WIN)
+        while status(id, ST_VISIBLE)
+            sleep(0.1)
+        wend
+    fend
+
+    function as_pubdate(updated)
+        pubdate = format(updated, '%a, %h %Y %T %z')
+        result = replace_dm(pubdate)
+    fend
+
+    function replace_dm(pubdate)
+        for month in [[' 1月', 'Jan'], [' 2月', 'Feb'], [' 3月', 'Mar'], [' 4月', 'Apr'], [' 5月', 'May'], [' 6月', 'Jun'], [' 7月', 'Jul'], [' 8月', 'Aug'], [' 9月', 'Sep'], ['10月', 'Oct'], ['11月', 'Nov'], ['12月', 'Dec']]
+            if pos(month[0], pubdate) > 0 then
+                pubdate = replace(pubdate, month[0], month[1])
+                break
+            endif
+        next
+        for day in [['日', 'Sun'], ['月', 'Mon'], ['火', 'Tue'], ['水', 'Wed'], ['木', 'Thu'], ['金', 'Fri'], ['土', 'Sat']]
+            if pos(day[0], pubdate) > 0 then
+                pubdate = replace(pubdate, day[0], day[1])
+                break
+            endif
+        next
+        result = pubdate
+    fend
+
+
+endclass
+
 
 class Scraper
-    // スクレイピング対象ページ
-    dim url
     // 曜日
     dim day
     // 時刻
     dim time
-    // スクレイピング用関数
-    dim fn
+    // スクレイピング用クラスインスタンス
+    dim scraper
     // constructor
-    procedure Scraper(url: string, day: number, time: number, fn: func)
-        this.url = url
+    procedure Scraper(scraper, day: number, time: number)
+        this.scraper = scraper
         this.day = day
         this.time = time
-        this.fn = fn
     fend
 
     // 指定時刻かどうか
+    // dはG_TIME_WW
     function check(d, h)
-        result = day == d and h >= time and time < h + 1
+        d = convert_weekday[d]
+        result = ((day andb d) == d) and h >= time and time < h + 1
     fend
 
-    // fn はFeedを返す
+    // scraper.scrape はFeedまたはEMPTYを返す
     function scrape()
-        result = fn(this.url)
+        result = scraper.scrape()
     fend
 endclass
 
@@ -113,7 +337,8 @@ textblock atom_template
     <id>tag:manga_feed/</id>
     <title>Webまんがフィード</title>
     <updated></updated>
-    <link rel='self' type='application/atom+xml' href='' />
+    <link rel='alternate' type='text/html' href='https://github.com/stuncloud/manga_feed' />
+    <link rel='self' type='application/atom+xml' href='https://stuncloud.github.io/manga_feed/index.xml' />
 </feed>
 endtextblock
 
@@ -126,3 +351,25 @@ textblock entry_template
     <summary></summary>
 </entry>
 endtextblock
+
+textblock rss2_template
+<?xml version='1.0' encoding='UTF-8'?>
+<rss version='2.0'>
+    <channel>
+        <title>Webまんがフィード</title>
+        <link>https://github.com/stuncloud/manga_feed</link>
+        <pubDate></pubDate>
+        <description>フィードのないWebまんがのフィードを配信する</description>
+    </channel>
+</rss>
+endtextblock
+
+textblock item_template
+<item>
+    <title></title>
+    <link></link>
+    <description></description>
+    <pubDate></pubDate>
+</item>
+endtextblock
+

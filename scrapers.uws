@@ -1,12 +1,17 @@
 // 動作確認
 if GET_UWSC_NAME == 'scrapers.uws' then
-    if f := FeedScraper.starwalk('https://webcomicgamma.takeshobo.co.jp/manga/starwalk/') then
-        f.print()
-    else
-        print '更新なし'
-    endif
+    scrapers = [
+        StarWalk,
+        KodamaMaria
+    ]
+    for cls in scrapers
+        if f := cls().scrape() then
+            f.print()
+        else
+            print '更新なし'
+        endif
+    next
 endif
-
 
 class Feed
     public title
@@ -14,53 +19,116 @@ class Feed
     public summary
     public updated
     // constructor
-    procedure Feed(title, url, summary)
+    procedure Feed(title, url, summary, updated = EMPTY)
         this.title = title
         this.url = url
         this.summary = summary
-        now = gettime()
-        this.updated = format(now, '%+')
+        if updated == EMPTY then
+            now = gettime()
+            // this.updated = format(now, '%+')
+            this.updated = now
+        else
+            this.updated = updated
+        endif
     fend
     procedure print()
         print "<#title><#CR><#url><#CR><#summary>"
     fend
+endclass
+
+function get_feed_object(title, link, description)
+    result = @{
+        "title": null,
+        "link": null,
+        "pubDate": null,
+        "description": null
+    }@
+    result.title = title
+    result.link = link
+    result.description = description
+    result.pubDate = as_pubdate(gettime())
+fend
+
+function as_pubdate(updated)
+    pubdate = format(updated, '%a, %h %Y %T %z')
+    result = replace_dm(pubdate)
+fend
+
+function replace_dm(pubdate)
+    for month in [[' 1月', 'Jan'], [' 2月', 'Feb'], [' 3月', 'Mar'], [' 4月', 'Apr'], [' 5月', 'May'], [' 6月', 'Jun'], [' 7月', 'Jul'], [' 8月', 'Aug'], [' 9月', 'Sep'], ['10月', 'Oct'], ['11月', 'Nov'], ['12月', 'Dec']]
+        if pos(month[0], pubdate) > 0 then
+            pubdate = replace(pubdate, month[0], month[1])
+            break
+        endif
+    next
+    for day in [['日', 'Sun'], ['月', 'Mon'], ['火', 'Tue'], ['水', 'Wed'], ['木', 'Thu'], ['金', 'Fri'], ['土', 'Sat']]
+        if pos(day[0], pubdate) > 0 then
+            pubdate = replace(pubdate, day[0], day[1])
+            break
+        endif
+    next
+    result = pubdate
+fend
+
+class StarWalk
+    dim url = 'https://webcomicgamma.takeshobo.co.jp/manga/starwalk/'
+    procedure StarWalk()
+    fend
+    function scrape()
+        dim key = 'スターウォーク'
+        result = EMPTY
+        tab = FeedScraperHelper.browser.new(url)
+        try
+            link = tab.document.querySelector('div.read__outer a')
+            if FeedScraperHelper.check(key, link.id) then
+                title = trim( link.querySelector('.episode').textContent )
+                summary = '公開日: ' + link.querySelector('.episode__text').textContent
+                result = get_feed_object(title, link.href, summary)
+                FeedScraperHelper.update(key, link.id)
+            endif
+        except
+            result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        endtry
+        tab.close()
+    fend
+endclass
+
+class KodamaMaria
+    dim url = 'https://to-ti.in/product/mariakodama'
+    procedure KodamaMaria()
+    fend
+    function scrape()
+        dim key = '児玉まりあ文学集成'
+        result = EMPTY
+
+        tab = FeedScraperHelper.browser.new(url)
+        try
+            link = tab.document.querySelector('.next a')
+            if FeedScraperHelper.check(key, link.href) then
+                title = trim( link.querySelector('span.typesquare_option').textContent )
+                summary = trim( tab.document.querySelector('header time').textContent )
+                result = get_feed_object(title, link.href, summary)
+                FeedScraperHelper.update(key, link.href)
+            endif
+        except
+            result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        endtry
+        tab.close()
+    fend
 
 endclass
 
-module FeedScraper
+module FeedScraperHelper
     const HEADLESS = FALSE
     const MANGA_FEED_PROFILE_DIR = 'D:\manga_feed\profile\'
     // const ERROR_LOG = 'D:\manga_feed\error.log'
-    dim browser
+    public browser
     // constructor
-    procedure FeedScraper
+    procedure FeedScraperHelper
         browser = browserbuilder(BC_MSEDGE)_
             .headless(HEADLESS)_
             .profile(MANGA_FEED_PROFILE_DIR)_
             .start()
-    fend
-
-    // スターウォーク 金曜12時
-    function starwalk(url)
-        const key = 'スターウォーク'
-        result = EMPTY
-
-        tab = browser.new(url)
-        try
-            link = tab.document.querySelector('div.read__outer a')
-            selend_ = 0
-            if check(key, link.id) then
-                title = trim( link.querySelector('.episode').textContent )
-                selend_ = 0
-                summary = '公開日: ' + link.querySelector('.episode__text').textContent
-                selend_ = 0
-                result = Feed(title, link.href, summary)
-                update(key, link.id)
-            endif
-        except
-            result = Feed('[解析エラー] スターウォーク', url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
-        endtry
-        tab.close()
     fend
 
     const ini = 'manga_feed.ini'

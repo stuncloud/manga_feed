@@ -1,0 +1,46 @@
+// def_dll generate(wstring, wstring, var wstring):bool:rssgen\target\release\rssgen.dll
+
+// dim err = format(chr(0), 256)
+// out = "test.xml"
+// print generate
+// if ! generate(json, out, err) then
+//     print err
+// endif
+
+// textblock json
+// {
+//     "title": "ほげほげ",
+//     "link": "https://example.com",
+//     "pubDate": "2025/02/03",
+//     "description": "てすと",
+//     "items": [
+//         {
+//             "title": "あいてむ1",
+//             "link": "https://example.com/item1",
+//             "pubDate": "2025/02/03",
+//             "description": "てすと1"
+//         },
+//         {
+//             "title": "あいてむ2",
+//             "link": "https://example.com/item2",
+//             "pubDate": "2025/02/02",
+//             "description": "てすと2"
+//         }
+//     ]
+// }
+// endtextblock
+
+
+a = @{
+    "foo": []
+}@
+
+
+print a
+hoge = [
+    @{"b": 1}@,
+    @{"c": 1}@
+]
+fuga = join(hoge, ",")
+a.foo = @[<#fuga>]@
+print a
