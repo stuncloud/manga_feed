@@ -2,11 +2,12 @@
 if GET_UWSC_NAME == 'scrapers.uws' then
     scrapers = [
         StarWalk,
-        KodamaMaria
+        KodamaMaria,
+        UtyuYabai,
     ]
     for cls in scrapers
         if f := cls().scrape() then
-            f.print()
+            print f
         else
             print '更新なし'
         endif
@@ -93,6 +94,29 @@ class StarWalk
     fend
 endclass
 
+class UtyuYabai
+    dim url = 'https://webcomicgamma.takeshobo.co.jp/manga/uchuuyabai/'
+    procedure UtyuYabai()
+    fend
+    function scrape()
+        dim key = 'ウは宇宙ヤバイのウ！'
+        result = EMPTY
+        tab = FeedScraperHelper.browser.new(url)
+        try
+            link = tab.document.querySelector('div.read__outer a')
+            if FeedScraperHelper.check(key, link.id) then
+                title = trim( link.querySelector('.episode').textContent )
+                summary = '公開日: ' + link.querySelector('.episode__text').textContent
+                result = get_feed_object(title, link.href, summary)
+                FeedScraperHelper.update(key, link.id)
+            endif
+        except
+            result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        endtry
+        tab.close()
+    fend
+endclass
+
 class KodamaMaria
     dim url = 'https://to-ti.in/product/mariakodama'
     procedure KodamaMaria()
@@ -120,7 +144,7 @@ endclass
 
 module FeedScraperHelper
     const HEADLESS = FALSE
-    const MANGA_FEED_PROFILE_DIR = 'D:\manga_feed\profile\'
+    const MANGA_FEED_PROFILE_DIR = "<#GET_CUR_DIR>\profile\"
     // const ERROR_LOG = 'D:\manga_feed\error.log'
     public browser
     // constructor

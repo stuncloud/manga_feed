@@ -71,9 +71,9 @@ while TRUE
 wend
 
 procedure push_to_github(xml, cnt)
-    doscmd("git add <#xml>")
-    doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
-    doscmd("git push")
+    print doscmd("git add <#xml>")
+    print doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
+    print doscmd("git push")
 fend
 
 

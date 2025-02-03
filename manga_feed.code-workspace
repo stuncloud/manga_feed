@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.windows": {
+			"RUSTFLAGS": "-C target-feature=+crt-static"
+		}
+	}
+}
