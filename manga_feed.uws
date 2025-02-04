@@ -40,13 +40,16 @@ channel = @{
 const out_xml = "docs\index.xml"
 const log_file = "manga_feed.log"
 
+print_now("Begin manga_feed")
+
 while TRUE
     gettime()
     items = []
     for key in scrapers
         if scrapers[key].check(G_TIME_WW, G_TIME_HH) then
+            print_now("checking <#key>")
             if item := scrapers[key].scrape() then
-                print "<#key> が更新されました"
+                print_now("<#key> が更新されました")
                 items += item
             endif
         endif
@@ -60,6 +63,7 @@ while TRUE
         if generate("<#channel>", out_xml, error) then
             push_to_github(out_xml, length(items))
         else
+            print_now("エラー(<#error>)")
             log = format(gettime(), "%F %T") + ": <#error>"
             fopen(log_file, F_APPEND, log)
         endif
@@ -72,10 +76,17 @@ while TRUE
 
 wend
 
+procedure print_now(msg)
+    now = format(gettime(), '%F %T')
+    print "<#now>: <#msg>"
+fend
+
 procedure push_to_github(xml, cnt)
+    print_now("push処理開始")
     print doscmd("git add <#xml>")
     print doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
     print doscmd("git push")
+    print_now("push処理終了")
 fend
 
 class Scraper
@@ -95,7 +106,7 @@ class Scraper
     // 指定時刻かどうか
     // dはG_TIME_WW
     function check(d, h)
-        if self.day == WeekDay.Any then
+        if this.day == WeekDay.Any then
             result = h >= time and time < h + 1
         else
             d = convert_weekday[d]
