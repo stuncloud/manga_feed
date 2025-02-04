@@ -11,6 +11,7 @@ enum WeekDay
     Fri = 16
     Sat = 32
     Sun = 64
+    Any = 128
 endenum
 hash public convert_weekday
     "<#G_WEEKDAY_MON>" = WeekDay.Mon
@@ -25,6 +26,7 @@ endhash
 
 hash scrapers
     スターウォーク = Scraper(StarWalk(), WeekDay.Fri, 12)
+    宇宙ヤバイ = Scraper(UtyuYabai(), WeekDay.Fri, 12)
     児玉まりあ文学集成 = Scraper(KodamaMaria(), WeekDay.Sun, 0)
 endhash
 
@@ -52,7 +54,7 @@ while TRUE
     if length(items) > 0 then
         items_str = join(items, ", ")
         channel.items = @[<#items_str>]@
-        channel.pubDate = items[0].pubDate
+        channel.pubDate = PubDate().to_string()
 
         error = format(chr(0), 512)
         if generate("<#channel>", out_xml, error) then
@@ -76,227 +78,6 @@ procedure push_to_github(xml, cnt)
     print doscmd("git push")
 fend
 
-
-class XMLWrapper
-    dim document
-    procedure XMLWrapper(xml_text)
-        document = createoleobj("Msxml2.DOMDocument")
-        if ! document.loadXML(xml_text) then
-            raise('XMLの読み込みに失敗', 'XMLWrapper')
-        endif
-    fend
-
-    dim prettify = function()
-        // MXXMLWriterの書き出し先
-        stream = createoleobj("ADODB.Stream")
-        stream.Charset = 'utf-8'
-        stream.Type = 2
-        stream.Open()
-        // SAXXMLReaderでparseしたXMLをstreamに書き込む
-        writer = createoleobj("MSXML2.MXXMLWriter")
-        writer.indent = TRUE
-        writer.encoding = 'utf-8'
-        writer.byteOrderMark = FALSE
-        writer.output = stream
-        // XMLをパースする
-        reader = createoleobj("MSXML2.SAXXMLReader")
-        reader.contentHandler = writer
-        reader.dtdHandler = writer
-        reader.errorHandler = writer
-
-        reader.parse(document.xml)
-
-        // result = writer.output
-        // result = replace(result, '<?xml version="1.0" encoding="UTF-16" standalone="no"?>', '<?xml version="1.0" encoding="UTF-8"?>')
-
-        // 位置を戻す
-        stream.Position = 0
-        // テキストとして読み出す
-        result = stream.ReadText(stream.Size)
-    fend
-
-    procedure save(path)
-        fid = fopen(path, F_WRITE8 or F_AUTOCLOSE)
-        pretty_xml = this.prettify()
-        fput(fid, pretty_xml, F_ALLTEXT)
-    fend
-
-    function create_element(name)
-        result = document.createElement(name)
-    fend
-
-    function get_node(xpath)
-        result = document.selectSingleNode(xpath)
-    fend
-
-    function create_cdata(data)
-        result = document.createCDATASection(data)
-    fend
-
-endclass
-
-
-class Atom
-    const filename = "index.xml"
-    dim updated = FALSE
-    dim xml
-    dim path
-    procedure Atom()
-        path = "<#GET_CUR_DIR>\docs\<#filename>"
-        if fopen(filename, F_EXISTS) then
-            fid = fopen(path, F_READ or F_AUTOCLOSE)
-            xml = XMLWrapper(fget(fid, F_ALLTEXT))
-        else
-            xml = XMLWrapper(atom_template)
-        endif
-    fend
-
-    procedure save()
-        xml.save(path)
-    fend
-
-    // xmlに追加
-    procedure add(feed: Feed)
-        e = new_entry(feed)
-        node = xml.get_node('//feed')
-        node.appendChild(e)
-
-        updated = TRUE
-    fend
-
-    procedure set_updated()
-        now = format(gettime(), '%+')
-        node = xml.get_node('//feed/updated')
-        node.text = now
-    fend
-
-    // githubにpush
-    function deploy()
-        if updated then
-            set_updated()
-            save()
-            updated = FALSE
-            push_to_github()
-            result = 0
-        endif
-    fend
-
-    function new_entry(feed: Feed)
-        result = xml.create_element('entry')
-        id = xml.create_element('id')
-        id.text = feed.url
-        result.appendChild(id)
-        title = xml.create_element('title')
-        title.text = feed.title
-        result.appendChild(title)
-        link = xml.create_element('link')
-        link.setAttribute('rel', 'alternate')
-        link.setAttribute('type', 'text/html')
-        link.setAttribute('href', feed.url)
-        result.appendChild(link)
-        updated = xml.create_element('updated')
-        updated.text = feed.updated
-        result.appendChild(updated)
-        summary = xml.create_element('summary')
-        summary.text = feed.summary
-        result.appendChild(summary)
-    fend
-
-endclass
-
-class RSS2
-    const filename = "index.xml"
-    dim updated = FALSE
-    dim xml
-    dim path
-    procedure RSS2()
-        path = "<#GET_CUR_DIR>\docs\<#filename>"
-        if fopen(filename, F_EXISTS) then
-            fid = fopen(path, F_READ or F_AUTOCLOSE)
-            xml = XMLWrapper(fget(fid, F_ALLTEXT))
-        else
-            xml = XMLWrapper(rss2_template)
-        endif
-    fend
-
-    procedure save()
-        xml.save(path)
-    fend
-
-    // xmlに追加
-    procedure add(feed: Feed)
-        item = new_item(feed)
-        node = xml.get_node('//rss/channel')
-        node.appendChild(item)
-
-        updated = TRUE
-    fend
-
-    procedure set_updated()
-        node = xml.get_node('//rss/channel/pubDate')
-        node.text = as_pubdate(gettime())
-    fend
-
-    // githubにpush
-    function deploy()
-        if updated then
-            set_updated()
-            save()
-            updated = FALSE
-
-            push_to_github()
-            result = 0
-        endif
-    fend
-
-    function new_item(feed: Feed)
-        result = xml.create_element('item')
-        title = xml.create_element('title')
-        title.text = feed.title
-        result.appendChild(title)
-        link = xml.create_element('link')
-        link.text = feed.url
-        result.appendChild(link)
-        description = xml.create_element('description')
-        cdata = xml.create_cdata(feed.summary)
-        description.appendChild(cdata)
-        result.appendChild(description)
-        result.appendChild(link)
-        pubDate = xml.create_element('pubDate')
-        pubDate.text = as_pubdate(feed.updated)
-        result.appendChild(pubDate)
-        print result.xml
-        id = getid(GET_LOGPRINT_WIN)
-        while status(id, ST_VISIBLE)
-            sleep(0.1)
-        wend
-    fend
-
-    function as_pubdate(updated)
-        pubdate = format(updated, '%a, %h %Y %T %z')
-        result = replace_dm(pubdate)
-    fend
-
-    function replace_dm(pubdate)
-        for month in [[' 1月', 'Jan'], [' 2月', 'Feb'], [' 3月', 'Mar'], [' 4月', 'Apr'], [' 5月', 'May'], [' 6月', 'Jun'], [' 7月', 'Jul'], [' 8月', 'Aug'], [' 9月', 'Sep'], ['10月', 'Oct'], ['11月', 'Nov'], ['12月', 'Dec']]
-            if pos(month[0], pubdate) > 0 then
-                pubdate = replace(pubdate, month[0], month[1])
-                break
-            endif
-        next
-        for day in [['日', 'Sun'], ['月', 'Mon'], ['火', 'Tue'], ['水', 'Wed'], ['木', 'Thu'], ['金', 'Fri'], ['土', 'Sat']]
-            if pos(day[0], pubdate) > 0 then
-                pubdate = replace(pubdate, day[0], day[1])
-                break
-            endif
-        next
-        result = pubdate
-    fend
-
-
-endclass
-
-
 class Scraper
     // 曜日
     dim day
@@ -305,7 +86,7 @@ class Scraper
     // スクレイピング用クラスインスタンス
     dim scraper
     // constructor
-    procedure Scraper(scraper, day: number, time: number)
+    procedure Scraper(scraper, day: WeekDay, time: number)
         this.scraper = scraper
         this.day = day
         this.time = time
@@ -314,8 +95,12 @@ class Scraper
     // 指定時刻かどうか
     // dはG_TIME_WW
     function check(d, h)
-        d = convert_weekday[d]
-        result = ((day andb d) == d) and h >= time and time < h + 1
+        if self.day == WeekDay.Any then
+            result = h >= time and time < h + 1
+        else
+            d = convert_weekday[d]
+            result = ((day andb d) == d) and h >= time and time < h + 1
+        endif
     fend
 
     // scraper.scrape はFeedまたはEMPTYを返す

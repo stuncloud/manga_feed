@@ -1,3 +1,5 @@
 manga_feed.ini
 rssgen/target/
 profile/
+test.*
+*.log

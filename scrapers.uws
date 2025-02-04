@@ -1,8 +1,8 @@
 // 動作確認
 if GET_UWSC_NAME == 'scrapers.uws' then
     scrapers = [
-        StarWalk,
-        KodamaMaria,
+        // StarWalk,
+        // KodamaMaria,
         UtyuYabai,
     ]
     for cls in scrapers
@@ -14,130 +14,149 @@ if GET_UWSC_NAME == 'scrapers.uws' then
     next
 endif
 
-class Feed
-    public title
-    public url
-    public summary
-    public updated
+class PubDate
+    dim dt_sec
     // constructor
-    procedure Feed(title, url, summary, updated = EMPTY)
-        this.title = title
-        this.url = url
-        this.summary = summary
-        if updated == EMPTY then
-            now = gettime()
-            // this.updated = format(now, '%+')
-            this.updated = now
+    procedure PubDate(dt: number = EMPTY)
+        if dt then
+            this.dt_sec = dt
         else
-            this.updated = updated
+            this.dt_sec = gettime()
         endif
     fend
-    procedure print()
-        print "<#title><#CR><#url><#CR><#summary>"
+
+    function get_sec()
+        result = this.dt_sec
+    fend
+
+    function to_string()
+        dt_str = format(this.dt_sec, '%a, %h %Y %T %z')
+        print dt_str
+        result = this.replace_day_month(dt_str)
+        print result
+    fend
+
+    dim replace_day_month = function(dt_str: string)
+        for month in [[' 1月', 'Jan'], [' 2月', 'Feb'], [' 3月', 'Mar'], [' 4月', 'Apr'], [' 5月', 'May'], [' 6月', 'Jun'], [' 7月', 'Jul'], [' 8月', 'Aug'], [' 9月', 'Sep'], ['10月', 'Oct'], ['11月', 'Nov'], ['12月', 'Dec']]
+            if pos(month[0], dt_str) > 0 then
+                dt_str = replace(dt_str, month[0], month[1])
+                break
+            endif
+        next
+        for day in [['日', 'Sun'], ['月', 'Mon'], ['火', 'Tue'], ['水', 'Wed'], ['木', 'Thu'], ['金', 'Fri'], ['土', 'Sat']]
+            if pos(day[0], dt_str) > 0 then
+                dt_str = replace(dt_str, day[0], day[1])
+                break
+            endif
+        next
+        result = dt_str
     fend
 endclass
 
-function get_feed_object(title, link, description)
+function get_feed_object(title, link, description, pub_dt_sec: number = 0)
     result = @{
         "title": null,
         "link": null,
         "pubDate": null,
+        "pubSec": null,
         "description": null
     }@
     result.title = title
     result.link = link
     result.description = description
-    result.pubDate = as_pubdate(gettime())
+    pd = PubDate(pub_dt_sec)
+    result.pubDate = pd.to_string()
+    result.pubSec = pd.get_sec()
 fend
 
-function as_pubdate(updated)
-    pubdate = format(updated, '%a, %h %Y %T %z')
-    result = replace_dm(pubdate)
+function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_DAYS)
+    select TRUE
+        // コミックガンマ
+        case pos('年', date) > 0
+            d= '2025年1月31日'
+            d = replace(d, '年', '/')
+            d = replace(d, '月', '/')
+            d = replace(d, '日', '')
+            a = split(d, '/', FALSE, TRUE)
+            for n, i in a
+                a[i] = format(n, 2, 0, FMT_ZERO)
+            next
+            d = join(a, '-')
+            result = gettime(offset, d, offset_opt)
+        // トーチ
+        case length(m := Match(date, "\d{2}/\d{2}/\d{2}")) > 0
+            d = '20' + m[0]
+            result = gettime(offset, d, offset_opt)
+        default
+            result = 0
+    selend
 fend
 
-function replace_dm(pubdate)
-    for month in [[' 1月', 'Jan'], [' 2月', 'Feb'], [' 3月', 'Mar'], [' 4月', 'Apr'], [' 5月', 'May'], [' 6月', 'Jun'], [' 7月', 'Jul'], [' 8月', 'Aug'], [' 9月', 'Sep'], ['10月', 'Oct'], ['11月', 'Nov'], ['12月', 'Dec']]
-        if pos(month[0], pubdate) > 0 then
-            pubdate = replace(pubdate, month[0], month[1])
-            break
+function ComicGammaScrape(key: string, url: string, ignore_check: bool = FALSE)
+    result = EMPTY
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        link = tab.document.querySelector('div.read__outer a')
+        if ignore_check or FeedScraperHelper.check(key, link.id) then
+            title = trim( link.querySelector('.episode').textContent )
+            updated = link.querySelector('.episode__text').textContent
+            pub_sec = convert_date_to_sec(updated, 12, G_OFFSET_HOURS)
+            summary = '公開日: ' + updated
+            result = get_feed_object(title, link.href, summary, pub_sec)
+            FeedScraperHelper.update(key, link.id)
         endif
-    next
-    for day in [['日', 'Sun'], ['月', 'Mon'], ['火', 'Tue'], ['水', 'Wed'], ['木', 'Thu'], ['金', 'Fri'], ['土', 'Sat']]
-        if pos(day[0], pubdate) > 0 then
-            pubdate = replace(pubdate, day[0], day[1])
-            break
-        endif
-    next
-    result = pubdate
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+    tab.close()
 fend
 
 class StarWalk
     dim url = 'https://webcomicgamma.takeshobo.co.jp/manga/starwalk/'
     procedure StarWalk()
     fend
-    function scrape()
+    function scrape(ignore_check = FALSE)
         dim key = 'スターウォーク'
-        result = EMPTY
-        tab = FeedScraperHelper.browser.new(url)
-        try
-            link = tab.document.querySelector('div.read__outer a')
-            if FeedScraperHelper.check(key, link.id) then
-                title = trim( link.querySelector('.episode').textContent )
-                summary = '公開日: ' + link.querySelector('.episode__text').textContent
-                result = get_feed_object(title, link.href, summary)
-                FeedScraperHelper.update(key, link.id)
-            endif
-        except
-            result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
-        endtry
-        tab.close()
+        result = ComicGammaScrape(key, url, ignore_check)
     fend
 endclass
 
 class UtyuYabai
-    dim url = 'https://webcomicgamma.takeshobo.co.jp/manga/uchuuyabai/'
     procedure UtyuYabai()
     fend
-    function scrape()
+    function scrape(ignore_check = FALSE)
+        dim url = 'https://webcomicgamma.takeshobo.co.jp/manga/uchuuyabai/'
         dim key = 'ウは宇宙ヤバイのウ！'
-        result = EMPTY
-        tab = FeedScraperHelper.browser.new(url)
-        try
-            link = tab.document.querySelector('div.read__outer a')
-            if FeedScraperHelper.check(key, link.id) then
-                title = trim( link.querySelector('.episode').textContent )
-                summary = '公開日: ' + link.querySelector('.episode__text').textContent
-                result = get_feed_object(title, link.href, summary)
-                FeedScraperHelper.update(key, link.id)
-            endif
-        except
-            result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
-        endtry
-        tab.close()
+        result = ComicGammaScrape(key, url, ignore_check)
     fend
 endclass
+
+function TotiScrape(key: string, url: string, ignore_check: bool = FALSE)
+    result = EMPTY
+
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        link = tab.document.querySelector('.next a')
+        if ignore_check or FeedScraperHelper.check(key, link.href) then
+            title = trim( link.querySelector('span.typesquare_option').textContent )
+            summary = trim( tab.document.querySelector('header time').textContent )
+            pub_sec = convert_date_to_sec(summary)
+            result = get_feed_object(title, link.href, summary, pub_sec)
+            FeedScraperHelper.update(key, link.href)
+        endif
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+    tab.close()
+fend
 
 class KodamaMaria
     dim url = 'https://to-ti.in/product/mariakodama'
     procedure KodamaMaria()
     fend
-    function scrape()
+    function scrape(ignore_check = FALSE)
         dim key = '児玉まりあ文学集成'
-        result = EMPTY
-
-        tab = FeedScraperHelper.browser.new(url)
-        try
-            link = tab.document.querySelector('.next a')
-            if FeedScraperHelper.check(key, link.href) then
-                title = trim( link.querySelector('span.typesquare_option').textContent )
-                summary = trim( tab.document.querySelector('header time').textContent )
-                result = get_feed_object(title, link.href, summary)
-                FeedScraperHelper.update(key, link.href)
-            endif
-        except
-            result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
-        endtry
-        tab.close()
+        result = TotiScrape(key, url, ignore_check)
     fend
 
 endclass
