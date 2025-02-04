@@ -16,10 +16,8 @@ pub extern "C" fn generate(json: *const u16, out: *const u16, error: *mut u16) -
                 return false;
             },
         };
-        dbg!(&feed);
 
         let channel = Channel::from(feed);
-        dbg!(&channel);
 
         let f = OpenOptions::new()
             .write(true)
