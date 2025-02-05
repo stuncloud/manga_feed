@@ -30,6 +30,12 @@ function get_scrapers()
             ScrapeDrecom,
             WeekDay.Fri, 12
         ),
+        Scraper(
+            "鍋に弾丸を受けながら",
+            'https://comic-walker.com/detail/KC_003969_S?episodeType=latest',
+            ScrapeKadoComi,
+            WeekDay.Fri, 0
+        ),
     ]
     result = Scrapers(items)
 fend
@@ -129,9 +135,33 @@ function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
         case length(m := Match(date, "\d{4}\.\d{2}\.\d{2}")) > 0
             d = replace(m[0], '.', '/')
             result = gettime(offset, d, offset_opt)
+        // yyyy/mm/dd 表記
+        // カドコミ
+        case length(m := Match(date, "\d{4}/\d{2}/\d{2}")) > 0
+            d = m[0]
+            result = gettime(offset, d, offset_opt)
         default
             result = 0
     selend
+fend
+
+function ScrapeKadoComi(key: string, url: string, ignore_check: bool = FALSE)
+    result = EMPTY
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        root = tab.document.querySelector('.EpisodesTabContents_root__VrJZ1')
+        link = root.querySelector('ul li a')
+        if ignore_check or FeedScraperHelper.check(key, link.href) then
+            title = trim( link.querySelector('.EpisodeThumbnail_title__G1eWj').textContent )
+            summary = trim( root.querySelector('.EpisodesTabContents_nextUpdateDate__YDQiC').textContent )
+            pub_sec = convert_date_to_sec(trim( link.querySelector('span').textContent ), 0)
+            result = get_feed_object(title, link.href, summary, pub_sec)
+            FeedScraperHelper.update(key, link.href)
+        endif
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+    tab.close()
 fend
 
 function ScrapeDrecom(key: string, url: string, ignore_check: bool = FALSE)
