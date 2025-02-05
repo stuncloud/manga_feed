@@ -1,18 +1,60 @@
-// 動作確認
-if GET_UWSC_NAME == 'scrapers.uws' then
-    scrapers = [
-        // StarWalk,
-        // KodamaMaria,
-        UtyuYabai,
+function get_scrapers()
+    items = [
+        Scraper(
+            "スターウォーク",
+            'https://webcomicgamma.takeshobo.co.jp/manga/starwalk/',
+            ScrapeComicGamma,
+            WeekDay.Fri, 12
+        ),
+        Scraper(
+            "ウは宇宙ヤバイのウ！",
+            'https://webcomicgamma.takeshobo.co.jp/manga/uchuuyabai/',
+            ScrapeComicGamma,
+            WeekDay.Fri, 12
+        ),
+        Scraper(
+            "児玉まりあ文学集成",
+            'https://to-ti.in/product/mariakodama',
+            ScrapeToti,
+            WeekDay.Sun, 0
+        ),
+        Scraper(
+            "無能なナナ",
+            'https://www.ganganonline.com/title/72',
+            ScrapeGanGanOnline,
+            WeekDay.Sat, 8
+        ),
+        Scraper(
+            "ブレイド＆バスタード",
+            'https://drecom-media.jp/drecomics/series/blade',
+            ScrapeDrecom,
+            WeekDay.Fri, 12
+        ),
     ]
-    for cls in scrapers
-        if f := cls().scrape() then
-            print f
-        else
-            print '更新なし'
-        endif
-    next
-endif
+    result = Scrapers(items)
+fend
+
+class Scrapers
+    dim items
+    procedure Scrapers(items: array)
+        this.items = items
+    fend
+    function get(i: number)
+        result = this.item[i]
+    fend
+    function get_by_title(title: string)
+        result = EMPTY
+        for item in items
+            if pos(title, item.title()) > 0 then
+                result = item
+                break
+            endif
+        next
+    fend
+    function as_array()
+        result = this.items
+    fend
+endclass
 
 class PubDate
     dim dt_sec
@@ -30,7 +72,7 @@ class PubDate
     fend
 
     function to_string()
-        dt_str = format(this.dt_sec, '%a, %h %Y %T %z')
+        dt_str = format(this.dt_sec, '%a, %d %h %Y %T %z')
         print dt_str
         result = this.replace_day_month(dt_str)
         print result
@@ -69,30 +111,78 @@ function get_feed_object(title, link, description, pub_dt_sec: number = 0)
     result.pubSec = pd.get_sec()
 fend
 
-function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_DAYS)
+function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
     select TRUE
+        // 年月日 表記
         // コミックガンマ
-        case pos('年', date) > 0
-            d= '2025年1月31日'
-            d = replace(d, '年', '/')
-            d = replace(d, '月', '/')
-            d = replace(d, '日', '')
-            a = split(d, '/', FALSE, TRUE)
-            for n, i in a
-                a[i] = format(n, 2, 0, FMT_ZERO)
-            next
-            d = join(a, '-')
-            result = gettime(offset, d, offset_opt)
+        // DRECOM
+        case length(m := Match(date, '(\d{4})年(\d{1,2})月(\d{1,2})日')) > 0
+            yyyy = m[0][1]
+            mm = format(val(m[0][2]), 2, 0, FMT_ZERO)
+            dd = format(val(m[0][3]), 2, 0, FMT_ZERO)
+            result = gettime(offset, "<#yyyy>/<#mm>/<#dd>", offset_opt)
+        // yy/mm/dd 表記
         // トーチ
         case length(m := Match(date, "\d{2}/\d{2}/\d{2}")) > 0
             d = '20' + m[0]
+            result = gettime(offset, d, offset_opt)
+        // yyyy.mm.dd 表記
+        // ガンガンONLINE
+        case length(m := Match(date, "\d{4}\.\d{2}\.\d{2}")) > 0
+            d = replace(m[0], '.', '/')
             result = gettime(offset, d, offset_opt)
         default
             result = 0
     selend
 fend
 
-function ComicGammaScrape(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeDrecom(key: string, url: string, ignore_check: bool = FALSE)
+    result = EMPTY
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        div = tab.document.querySelector('.ebookListItem')
+        link = div.querySelector('a').href
+        if ignore_check or FeedScraperHelper.check(key, link) then
+            title = trim(div.querySelector('.ebookListItem_title').textContent)
+            spans = div.querySelectorAll('.ebookListItem_publishDate span')
+            summary = trim( spans[1].textContent )
+            pub_sec = convert_date_to_sec(trim( spans[0].textContent ), 12)
+            result = get_feed_object(title, link, summary, pub_sec)
+            FeedScraperHelper.update(key, link)
+        endif
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+    tab.close()
+fend
+
+function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE)
+    result = EMPTY
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        link = tab.document.querySelectorAll('.Chapter_chapter__oSTBF')[1]
+        inner = link.querySelectorAll('.Chapter_chapter__body__Iopda p')
+        no = trim( inner[0].textContent )
+        subtitle = trim( inner[1].textContent )
+        if ignore_check or FeedScraperHelper.check(key, no) then
+            pub_sec = convert_date_to_sec(trim( inner[2].textContent ), 8)
+            // urlを得るために実際にリンクをクリック
+            link.click()
+            // 読み込み待ち
+            tab.wait()
+            // URL取得
+            sleep(1)
+            href = tab.document.location.href
+            result = get_feed_object(no, href, subtitle, pub_sec)
+            FeedScraperHelper.update(key, no)
+        endif
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+    tab.close()
+fend
+
+function ScrapeComicGamma(key: string, url: string, ignore_check: bool = FALSE)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
@@ -100,7 +190,7 @@ function ComicGammaScrape(key: string, url: string, ignore_check: bool = FALSE)
         if ignore_check or FeedScraperHelper.check(key, link.id) then
             title = trim( link.querySelector('.episode').textContent )
             updated = link.querySelector('.episode__text').textContent
-            pub_sec = convert_date_to_sec(updated, 12, G_OFFSET_HOURS)
+            pub_sec = convert_date_to_sec(updated, 12)
             summary = '公開日: ' + updated
             result = get_feed_object(title, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.id)
@@ -111,27 +201,7 @@ function ComicGammaScrape(key: string, url: string, ignore_check: bool = FALSE)
     tab.close()
 fend
 
-class StarWalk
-    dim url = 'https://webcomicgamma.takeshobo.co.jp/manga/starwalk/'
-    procedure StarWalk()
-    fend
-    function scrape(ignore_check = FALSE)
-        dim key = 'スターウォーク'
-        result = ComicGammaScrape(key, url, ignore_check)
-    fend
-endclass
-
-class UtyuYabai
-    procedure UtyuYabai()
-    fend
-    function scrape(ignore_check = FALSE)
-        dim url = 'https://webcomicgamma.takeshobo.co.jp/manga/uchuuyabai/'
-        dim key = 'ウは宇宙ヤバイのウ！'
-        result = ComicGammaScrape(key, url, ignore_check)
-    fend
-endclass
-
-function TotiScrape(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeToti(key: string, url: string, ignore_check: bool = FALSE)
     result = EMPTY
 
     tab = FeedScraperHelper.browser.new(url)
@@ -149,17 +219,6 @@ function TotiScrape(key: string, url: string, ignore_check: bool = FALSE)
     endtry
     tab.close()
 fend
-
-class KodamaMaria
-    dim url = 'https://to-ti.in/product/mariakodama'
-    procedure KodamaMaria()
-    fend
-    function scrape(ignore_check = FALSE)
-        dim key = '児玉まりあ文学集成'
-        result = TotiScrape(key, url, ignore_check)
-    fend
-
-endclass
 
 module FeedScraperHelper
     const HEADLESS = FALSE
@@ -191,3 +250,65 @@ module FeedScraperHelper
     //     fput(fid, msg)
     // fend
 endmodule
+
+
+class Scraper
+    // タイトル
+    dim title
+    // URL
+    dim url
+    // 曜日
+    dim day
+    // 時刻
+    dim time
+    // スクレイピング用関数
+    dim fn
+    // constructor
+    procedure Scraper(title: string, url: string, fn: func, day: WeekDay, time: number)
+        this.title = title
+        this.url = url
+        this.fn = fn
+        this.day = day
+        this.time = time
+    fend
+
+    // 指定時刻かどうか
+    // dはG_TIME_WW
+    function check(d, h)
+        if this.day == WeekDay.Any then
+            result = h >= time and time < h + 1
+        else
+            d = convert_weekday[d]
+            result = ((day andb d) == d) and h >= time and time < h + 1
+        endif
+    fend
+
+    // スクレイピング用関数はUObject、またはEMPTYを返す
+    function scrape(ignore_check = FALSE)
+        result = fn(this.title, this.url, ignore_check)
+    fend
+
+    function title()
+        result = this.title
+    fend
+endclass
+
+enum WeekDay
+    Mon = 1
+    Tue = 2
+    Wed = 4
+    Thu = 8
+    Fri = 16
+    Sat = 32
+    Sun = 64
+    Any = 128
+endenum
+hash public convert_weekday
+    "<#G_WEEKDAY_MON>" = WeekDay.Mon
+    "<#G_WEEKDAY_TUE>" = WeekDay.Tue
+    "<#G_WEEKDAY_WED>" = WeekDay.Wed
+    "<#G_WEEKDAY_THU>" = WeekDay.Thu
+    "<#G_WEEKDAY_FRI>" = WeekDay.Fri
+    "<#G_WEEKDAY_SAT>" = WeekDay.Sat
+    "<#G_WEEKDAY_SUN>" = WeekDay.Sun
+endhash

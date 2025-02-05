@@ -3,33 +3,6 @@ def_dll generate(wstring, wstring, var wstring):bool:rssgen\target\release\rssge
 
 call scrapers.uws
 
-enum WeekDay
-    Mon = 1
-    Tue = 2
-    Wed = 4
-    Thu = 8
-    Fri = 16
-    Sat = 32
-    Sun = 64
-    Any = 128
-endenum
-hash public convert_weekday
-    "<#G_WEEKDAY_MON>" = WeekDay.Mon
-    "<#G_WEEKDAY_TUE>" = WeekDay.Tue
-    "<#G_WEEKDAY_WED>" = WeekDay.Wed
-    "<#G_WEEKDAY_THU>" = WeekDay.Thu
-    "<#G_WEEKDAY_FRI>" = WeekDay.Fri
-    "<#G_WEEKDAY_SAT>" = WeekDay.Sat
-    "<#G_WEEKDAY_SUN>" = WeekDay.Sun
-endhash
-
-
-hash scrapers
-    スターウォーク = Scraper(StarWalk(), WeekDay.Fri, 12)
-    宇宙ヤバイ = Scraper(UtyuYabai(), WeekDay.Fri, 12)
-    児玉まりあ文学集成 = Scraper(KodamaMaria(), WeekDay.Sun, 0)
-endhash
-
 channel = @{
     "title": "Webまんがフィード",
     "link": "https://github.com/stuncloud/manga_feed",
@@ -39,17 +12,19 @@ channel = @{
 }@
 const out_xml = "docs\index.xml"
 const log_file = "manga_feed.log"
+scrapers = get_scrapers()
 
 print_now("Begin manga_feed")
 
 while TRUE
     gettime()
     items = []
-    for key in scrapers
-        if scrapers[key].check(G_TIME_WW, G_TIME_HH) then
-            print_now("checking <#key>")
-            if item := scrapers[key].scrape() then
-                print_now("<#key> が更新されました")
+    for scraper in scrapers.as_array()
+        title = scraper.title()
+        if scraper.check(G_TIME_WW, G_TIME_HH) then
+            print_now("checking <#title>")
+            if item := scraper.scrape() then
+                print_now("<#title> が更新されました")
                 items += item
             endif
         endif
@@ -88,77 +63,3 @@ procedure push_to_github(xml, cnt)
     print doscmd("git push")
     print_now("push処理終了")
 fend
-
-class Scraper
-    // 曜日
-    dim day
-    // 時刻
-    dim time
-    // スクレイピング用クラスインスタンス
-    dim scraper
-    // constructor
-    procedure Scraper(scraper, day: WeekDay, time: number)
-        this.scraper = scraper
-        this.day = day
-        this.time = time
-    fend
-
-    // 指定時刻かどうか
-    // dはG_TIME_WW
-    function check(d, h)
-        if this.day == WeekDay.Any then
-            result = h >= time and time < h + 1
-        else
-            d = convert_weekday[d]
-            result = ((day andb d) == d) and h >= time and time < h + 1
-        endif
-    fend
-
-    // scraper.scrape はFeedまたはEMPTYを返す
-    function scrape()
-        result = scraper.scrape()
-    fend
-endclass
-
-textblock atom_template
-<?xml version='1.0' encoding='UTF-8'?>
-<feed xmlns='http://www.w3.org/2005/Atom' xml:lang='ja'>
-    <id>tag:manga_feed/</id>
-    <title>Webまんがフィード</title>
-    <updated></updated>
-    <link rel='alternate' type='text/html' href='https://github.com/stuncloud/manga_feed' />
-    <link rel='self' type='application/atom+xml' href='https://stuncloud.github.io/manga_feed/index.xml' />
-</feed>
-endtextblock
-
-textblock entry_template
-<entry>
-    <id></id>
-    <title></title>
-    <link rel='alternate' type='text/html' href='' />
-    <updated></updated>
-    <summary></summary>
-</entry>
-endtextblock
-
-textblock rss2_template
-<?xml version='1.0' encoding='UTF-8'?>
-<rss version='2.0'>
-    <channel>
-        <title>Webまんがフィード</title>
-        <link>https://github.com/stuncloud/manga_feed</link>
-        <pubDate></pubDate>
-        <description>フィードのないWebまんがのフィードを配信する</description>
-    </channel>
-</rss>
-endtextblock
-
-textblock item_template
-<item>
-    <title></title>
-    <link></link>
-    <description></description>
-    <pubDate></pubDate>
-</item>
-endtextblock
-
