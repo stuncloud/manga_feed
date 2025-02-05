@@ -73,9 +73,7 @@ class PubDate
 
     function to_string()
         dt_str = format(this.dt_sec, '%a, %d %h %Y %T %z')
-        print dt_str
         result = this.replace_day_month(dt_str)
-        print result
     fend
 
     dim replace_day_month = function(dt_str: string)
