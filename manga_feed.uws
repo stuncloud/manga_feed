@@ -15,20 +15,36 @@ const log_file = "manga_feed.log"
 scrapers = get_scrapers()
 
 print_now("Begin manga_feed")
+// 起動時は全部チェック
+// items = check_for_update(scrapers, TRUE)
+// gen_rss_and_push(channel, items)
 
 while TRUE
+    items = check_for_update(scrapers)
+    gen_rss_and_push(channel, items)
+
+    repeat
+        sleep(300)
+        gettime()
+    until 0 <= G_TIME_NN and G_TIME_NN <= 5 // n時0分から5分の間になるまで待つ
+wend
+
+function check_for_update(scrapers, ignore_check = FALSE)
     gettime()
-    items = []
+    result = []
     for scraper in scrapers.as_array()
         title = scraper.title()
-        if scraper.check(G_TIME_WW, G_TIME_HH) then
+        if ignore_check or scraper.check(G_TIME_WW, G_TIME_HH) then
             print_now("checking <#title>")
             if item := scraper.scrape() then
                 print_now("<#title> が更新されました")
-                items += item
+                print_now(item)
+                result += item
             endif
         endif
     next
+fend
+procedure gen_rss_and_push(channel, items: array)
     if length(items) > 0 then
         items_str = join(items, ", ")
         channel.items = @[<#items_str>]@
@@ -43,13 +59,7 @@ while TRUE
             fopen(log_file, F_APPEND, log)
         endif
     endif
-
-    repeat
-        sleep(300)
-        gettime()
-    until 0 <= G_TIME_NN and G_TIME_NN <= 5 // n時0分から5分の間になるまで待つ
-
-wend
+fend
 
 procedure print_now(msg)
     now = format(gettime(), '%F %T')
