@@ -65,8 +65,8 @@ endclass
 class PubDate
     dim dt_sec
     // constructor
-    procedure PubDate(dt: number = EMPTY)
-        if dt then
+    procedure PubDate(dt: number = 0)
+        if dt > 0 then
             this.dt_sec = dt
         else
             this.dt_sec = gettime()
@@ -152,7 +152,8 @@ function ScrapeKadoComi(key: string, url: string, ignore_check: bool = FALSE)
         root = tab.document.querySelector('.EpisodesTabContents_root__VrJZ1')
         link = root.querySelector('ul li a')
         if ignore_check or FeedScraperHelper.check(key, link.href) then
-            title = trim( link.querySelector('.EpisodeThumbnail_title__G1eWj').textContent )
+            subtitle = trim( link.querySelector('.EpisodeThumbnail_title__G1eWj').textContent )
+            title = "<#subtitle> (<#key>)"
             summary = trim( root.querySelector('.EpisodesTabContents_nextUpdateDate__YDQiC').textContent )
             pub_sec = convert_date_to_sec(trim( link.querySelector('span').textContent ), 0)
             result = get_feed_object(title, link.href, summary, pub_sec)
@@ -171,7 +172,8 @@ function ScrapeDrecom(key: string, url: string, ignore_check: bool = FALSE)
         div = tab.document.querySelector('.ebookListItem')
         link = div.querySelector('a').href
         if ignore_check or FeedScraperHelper.check(key, link) then
-            title = trim(div.querySelector('.ebookListItem_title').textContent)
+            subtitle = trim(div.querySelector('.ebookListItem_title').textContent)
+            title = "<#subtitle> (<#key>)"
             spans = div.querySelectorAll('.ebookListItem_publishDate span')
             summary = trim( spans[1].textContent )
             pub_sec = convert_date_to_sec(trim( spans[0].textContent ), 12)
@@ -190,9 +192,10 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE
     try
         link = tab.document.querySelectorAll('.Chapter_chapter__oSTBF')[1]
         inner = link.querySelectorAll('.Chapter_chapter__body__Iopda p')
-        no = trim( inner[0].textContent )
-        subtitle = trim( inner[1].textContent )
-        if ignore_check or FeedScraperHelper.check(key, no) then
+        subtitle = trim( inner[0].textContent )
+        title = "<#subtitle> (<#key>)"
+        summary = trim( inner[1].textContent )
+        if ignore_check or FeedScraperHelper.check(key, subtitle) then
             pub_sec = convert_date_to_sec(trim( inner[2].textContent ), 8)
             // urlを得るために実際にリンクをクリック
             link.click()
@@ -201,8 +204,8 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE
             // URL取得
             sleep(1)
             href = tab.document.location.href
-            result = get_feed_object(no, href, subtitle, pub_sec)
-            FeedScraperHelper.update(key, no)
+            result = get_feed_object(subtitle, href, summary, pub_sec)
+            FeedScraperHelper.update(key, subtitle)
         endif
     except
         result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
@@ -216,7 +219,8 @@ function ScrapeComicGamma(key: string, url: string, ignore_check: bool = FALSE)
     try
         link = tab.document.querySelector('div.read__outer a')
         if ignore_check or FeedScraperHelper.check(key, link.id) then
-            title = trim( link.querySelector('.episode').textContent )
+            subtitle = trim( link.querySelector('.episode').textContent )
+            title = "<#subtitle> (<#key>)"
             updated = link.querySelector('.episode__text').textContent
             pub_sec = convert_date_to_sec(updated, 12)
             summary = '公開日: ' + updated
@@ -307,7 +311,7 @@ class Scraper
             result = h >= time and time < h + 1
         else
             d = convert_weekday[d]
-            result = ((day andb d) == d) and h >= time and time < h + 1
+            result = ((day andb d) == d) and int(time) == int(h)
         endif
     fend
 
