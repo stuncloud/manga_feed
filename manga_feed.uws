@@ -1,37 +1,57 @@
 
-def_dll generate(wstring, wstring, var wstring):bool:rssgen\target\release\rssgen.dll
-
 call scrapers.uws
 
-channel = @{
-    "title": "Webまんがフィード",
-    "link": "https://github.com/stuncloud/manga_feed",
-    "pubDate": null,
-    "description": "Webまんがフィードを自力で作っていくやつ",
-    "items": null
-}@
 const out_xml = "docs\index.xml"
+const channel_json = "channel.json"
 const log_file = "manga_feed.log"
 scrapers = get_scrapers()
 
 print_now("Begin manga_feed")
-// 起動時は全部チェック
-// items = check_for_update(scrapers, TRUE)
-// gen_rss_and_push(channel, items)
 
 while TRUE
-    items = check_for_update(scrapers)
-    gen_rss_and_push(channel, items)
-
+    channel = load_channel()
+    remove_old_item(channel)
+    cnt = check_for_update(scrapers, channel)
+    gen_rss_and_push(channel, cnt)
+    save_channel(channel)
     repeat
         sleep(300)
         gettime()
     until 0 <= G_TIME_NN and G_TIME_NN <= 5 // n時0分から5分の間になるまで待つ
 wend
 
-function check_for_update(scrapers, ignore_check = FALSE)
+function load_channel()
+    if fopen(channel_json, F_EXISTS) then
+        json = fget(fopen(channel_json, F_READ or F_AUTOCLOSE), F_ALLTEXT)
+        try
+            result = fromjson(json)
+            exit
+        except
+        endtry
+    endif
+    result = @{
+        "title": "Webまんがフィード",
+        "link": "https://github.com/stuncloud/manga_feed",
+        "pubDate": null,
+        "description": "Webまんがフィードを自力で作っていくやつ",
+        "items": []
+    }@
+fend
+procedure save_channel(channel: uobject)
+    json = tojson(channel)
+    fput(fopen(channel_json, F_WRITE8 or F_AUTOCLOSE), json, F_ALLTEXT)
+fend
+
+procedure remove_old_item(channel: uobject)
+    // 90日経過したアイテムは除去
+    limit = gettime(-90, , G_OFFSET_DAYS)
+    items = Filter(channel.items).by(|item => item.pubsec > limit|)
+    channel.items = items
+fend
+
+procedure check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
     gettime()
-    result = []
+    result = 0
     for scraper in scrapers.as_array()
         title = scraper.title()
         if ignore_check or scraper.check(G_TIME_WW, G_TIME_HH) then
@@ -39,20 +59,19 @@ function check_for_update(scrapers, ignore_check = FALSE)
             if item := scraper.scrape() then
                 print_now("<#title> が更新されました")
                 print_now(item)
-                result += item
+                channel.items += item
+                result += 0
             endif
         endif
     next
 fend
-procedure gen_rss_and_push(channel, items: array)
-    if length(items) > 0 then
-        items_str = join(items, ", ")
-        channel.items = @[<#items_str>]@
+procedure gen_rss_and_push(channel, cnt)
+    if length(channel.items) > 0 then
         channel.pubDate = PubDate().to_string()
 
         error = format(chr(0), 512)
         if generate("<#channel>", out_xml, error) then
-            push_to_github(out_xml, length(items))
+            push_to_github(out_xml, cnt)
         else
             print_now("エラー(<#error>)")
             log = format(gettime(), "%F %T") + ": <#error>"
@@ -73,3 +92,20 @@ procedure push_to_github(xml, cnt)
     print doscmd("git push")
     print_now("push処理終了")
 fend
+
+class Filter
+    dim arr
+    procedure Filter(arr: uobject)
+        this.arr = arr
+    fend
+    function by(fn: func)
+        result = []
+        for item in arr
+            if fn(item) then
+                result += item
+            endif
+        next
+    fend
+endclass
+
+def_dll generate(wstring, wstring, var wstring):bool:rssgen\target\release\rssgen.dll

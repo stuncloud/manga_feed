@@ -1,4 +1,5 @@
 manga_feed.ini
+*.json
 rssgen/target/
 profile/
 test.*
