@@ -3,44 +3,48 @@ use std::{fmt::Display, fs::OpenOptions};
 use serde::Deserialize;
 use rss::{Channel, ChannelBuilder, ItemBuilder};
 
+/// # Safety
+///
+/// `*const u16` はnull終端UTF16文字列のポインタ
+/// `*mut u16` はUTF16文字列バッファのポインタ
 #[no_mangle]
-pub extern "C" fn generate(json: *const u16, out: *const u16, error: *mut u16) -> bool {
-    unsafe {
+pub unsafe extern "C" fn generate(json: *const u16, out: *const u16, error: *mut u16) -> bool {
+    let json = string_from_ptr(json);
+    let out = string_from_ptr(out);
+    let feed = match serde_json::from_str::<FeedJson>(&json) {
+        Ok(mut feed) => {
+            feed.sort_items();
+            feed
+        },
+        Err(e) => {
+            set_error(error, e);
+            return false;
+        },
+    };
 
-        let json = string_from_ptr(json);
-        let out = string_from_ptr(out);
-        let feed = match serde_json::from_str::<FeedJson>(&json) {
-            Ok(feed) => feed,
-            Err(e) => {
-                set_error(error, e);
-                return false;
-            },
-        };
+    let channel = Channel::from(feed);
 
-        let channel = Channel::from(feed);
+    let f = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(out);
+    let writer = match f {
+        Ok(f) => f,
+        Err(e) => {
+            set_error(error, e);
+            return false;
+        },
+    };
 
-        let f = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(out);
-        let writer = match f {
-            Ok(f) => f,
-            Err(e) => {
-                set_error(error, e);
-                return false;
-            },
-        };
-
-        match channel.pretty_write_to(writer, b' ', 2) {
-            Ok(f) => {
-                drop(f);
-            },
-            Err(e) => {
-                set_error(error, e);
-                return false
-            },
-        }
+    match channel.pretty_write_to(writer, b' ', 2) {
+        Ok(f) => {
+            drop(f);
+        },
+        Err(e) => {
+            set_error(error, e);
+            return false
+        },
     }
 
     true
@@ -99,37 +103,52 @@ struct FeedItem {
     link: String,
     #[serde(rename(deserialize = "pubDate"))]
     pub_date: String,
+    #[serde(rename(deserialize = "pubSec"))]
+    pub_sec: usize,
+}
+
+impl FeedJson {
+    fn sort_items(&mut self) {
+        self.items.sort_by(|a, b| b.pub_sec.cmp(&a.pub_sec));
+    }
 }
 
 #[cfg(test)]
 mod test {
+    fn to_utf16(str: &str) -> Vec<u16> {
+        str.encode_utf16().chain(std::iter::once(0)).collect()
+    }
+
     #[test]
     fn test_generate() {
         let mut error = vec![0u16; 256];
-        let out = "target/test.xml\0";
-        let json = r#"{
+        let out = to_utf16("target/test.xml");
+        let json = to_utf16(r#"{
     "title": "ほげほげ",
     "link": "https://example.com",
     "pubDate": "2025/02/03",
     "description": "てすと",
     "items": [
         {
-            "title": "あいてむ1",
-            "link": "https://example.com/item1",
-            "pubDate": "2025/02/03",
-            "description": "てすと1"
-        },
-        {
             "title": "あいてむ2",
             "link": "https://example.com/item2",
             "pubDate": "2025/02/02",
+            "pubSec": 791769600,
             "description": "てすと2"
+        },
+        {
+            "title": "あいてむ1",
+            "link": "https://example.com/item1",
+            "pubDate": "2025/02/03",
+            "pubSec": 791856000,
+            "description": "てすと1"
         }
     ]
-}"#;
-        let out = out.encode_utf16().collect::<Vec<_>>();
-        let mut json = json.encode_utf16().collect::<Vec<_>>();
-        json.push(0);
-        assert!(super::generate(json.as_ptr(), out.as_ptr(), error.as_mut_ptr() as _));
+}"#);
+        assert!(
+            unsafe {
+                super::generate(json.as_ptr(), out.as_ptr(), error.as_mut_ptr() as _)
+            }
+        );
     }
 }
