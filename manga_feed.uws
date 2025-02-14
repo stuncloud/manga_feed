@@ -7,18 +7,31 @@ const log_file = "manga_feed.log"
 scrapers = get_scrapers()
 
 print_now("Begin manga_feed")
+check_immediately(scrapers)
 
 while TRUE
-    channel = load_channel()
-    remove_old_item(channel)
-    cnt = check_for_update(scrapers, channel)
-    gen_rss_and_push(channel, cnt)
-    save_channel(channel)
+    check_on_schedule(scrapers)
     repeat
         sleep(300)
         gettime()
     until 0 <= G_TIME_NN and G_TIME_NN <= 5 // n時0分から5分の間になるまで待つ
 wend
+
+procedure check_on_schedule(scrapers)
+    channel = load_channel()
+    remove_old_item(channel)
+    cnt = check_for_update(scrapers, channel)
+    gen_rss_and_push(channel, cnt)
+    save_channel(channel)
+fend
+
+procedure check_immediately(scrapers)
+    channel = load_channel()
+    remove_old_item(channel)
+    cnt = check_for_update(scrapers, channel, true)
+    gen_rss_and_push(channel, cnt)
+    save_channel(channel)
+fend
 
 function load_channel()
     if fopen(channel_json, F_EXISTS) then
