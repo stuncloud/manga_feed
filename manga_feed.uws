@@ -51,7 +51,7 @@ function load_channel()
     }@
 fend
 procedure save_channel(channel: uobject)
-    json = tojson(channel)
+    json = tojson(channel, true)
     fput(fopen(channel_json, F_WRITE8 or F_AUTOCLOSE), json, F_ALLTEXT)
 fend
 
