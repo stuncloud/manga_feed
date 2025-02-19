@@ -96,6 +96,12 @@ struct FeedJson {
     items: Vec<FeedItem>,
 }
 
+impl FeedJson {
+    fn sort_items(&mut self) {
+        self.items.sort_by(|a, b| b.compare(&a));
+    }
+}
+
 #[derive(Debug, Deserialize)]
 struct FeedItem {
     title: String,
@@ -106,12 +112,14 @@ struct FeedItem {
     #[serde(rename(deserialize = "pubSec"))]
     pub_sec: f64,
 }
-
-impl FeedJson {
-    fn sort_items(&mut self) {
-        self.items.sort_by(|a, b| b.pub_sec.cmp(&a.pub_sec));
+impl FeedItem {
+    fn compare(&self, other: &Self) -> std::cmp::Ordering {
+        let b = other.pub_sec as usize;
+        let a = self.pub_sec as usize;
+        b.cmp(&a)
     }
 }
+
 
 #[cfg(test)]
 mod test {
