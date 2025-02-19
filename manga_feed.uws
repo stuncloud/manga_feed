@@ -81,9 +81,8 @@ procedure check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
     next
 fend
 procedure gen_rss_and_push(channel, cnt)
-    if length(channel.items) > 0 then
+    if cnt > 0 then
         channel.pubDate = PubDate().to_string()
-
         error = format(chr(0), 512)
         if generate("<#channel>", out_xml, error) then
             push_to_github(out_xml, cnt)
