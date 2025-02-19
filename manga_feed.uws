@@ -74,6 +74,8 @@ procedure check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
                 print_now(item)
                 channel.items += item
                 result += 0
+            else
+                print_now("更新なし")
             endif
         endif
     next
