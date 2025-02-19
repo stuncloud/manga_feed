@@ -104,7 +104,7 @@ struct FeedItem {
     #[serde(rename(deserialize = "pubDate"))]
     pub_date: String,
     #[serde(rename(deserialize = "pubSec"))]
-    pub_sec: usize,
+    pub_sec: f64,
 }
 
 impl FeedJson {
