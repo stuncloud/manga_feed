@@ -62,7 +62,7 @@ procedure remove_old_item(channel: uobject)
     channel.items = items
 fend
 
-procedure check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
+function check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
     gettime()
     result = 0
     for scraper in scrapers.as_array()
