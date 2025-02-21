@@ -10,11 +10,11 @@ print_now("Begin manga_feed")
 check_immediately(scrapers)
 
 while TRUE
-    check_on_schedule(scrapers)
     repeat
         sleep(300)
         gettime()
     until 0 <= G_TIME_NN and G_TIME_NN <= 5 // n時0分から5分の間になるまで待つ
+    check_on_schedule(scrapers)
 wend
 
 procedure check_on_schedule(scrapers)
