@@ -73,30 +73,33 @@ function check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
                 print_now("<#title> が更新されました")
                 print_now(item)
                 channel.items += item
-                result += 0
+                result += 1
             else
-                print_now("更新なし")
+                print_now("更新なし: <#title>")
             endif
         endif
     next
 fend
 procedure gen_rss_and_push(channel, cnt)
+    print_now("更新数: <#cnt>")
     if cnt > 0 then
         channel.pubDate = PubDate().to_string()
         error = format(chr(0), 512)
         if generate("<#channel>", out_xml, error) then
+            print_now("rss生成: 成功")
             push_to_github(out_xml, cnt)
         else
-            print_now("エラー(<#error>)")
-            log = format(gettime(), "%F %T") + ": <#error>"
+            print_now("rss生成: 失敗")
+            log = print_now("エラー(<#error>)")
             fopen(log_file, F_APPEND, log)
         endif
     endif
 fend
 
-procedure print_now(msg)
+function print_now(msg)
     now = format(gettime(), '%F %T')
-    print "<#now>: <#msg>"
+    result = "<#now>: <#msg>"
+    print result
 fend
 
 procedure push_to_github(xml, cnt)
