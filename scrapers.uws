@@ -153,10 +153,10 @@ function ScrapeKadoComi(key: string, url: string, ignore_check: bool = FALSE)
         link = root.querySelector('ul li a')
         if ignore_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( link.querySelector('.EpisodeThumbnail_title__G1eWj').textContent )
-            title = "<#subtitle> (<#key>)"
+            subtitle = "<#subtitle> (<#key>)"
             summary = trim( root.querySelector('.EpisodesTabContents_nextUpdateDate__YDQiC').textContent )
             pub_sec = convert_date_to_sec(trim( link.querySelector('span').textContent ), 0)
-            result = get_feed_object(title, link.href, summary, pub_sec)
+            result = get_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.href)
         endif
     except
@@ -173,11 +173,11 @@ function ScrapeDrecom(key: string, url: string, ignore_check: bool = FALSE)
         link = div.querySelector('a').href
         if ignore_check or FeedScraperHelper.check(key, link) then
             subtitle = trim(div.querySelector('.ebookListItem_title').textContent)
-            title = "<#subtitle> (<#key>)"
+            subtitle = "<#subtitle> (<#key>)"
             spans = div.querySelectorAll('.ebookListItem_publishDate span')
             summary = trim( spans[1].textContent )
             pub_sec = convert_date_to_sec(trim( spans[0].textContent ), 12)
-            result = get_feed_object(title, link, summary, pub_sec)
+            result = get_feed_object(subtitle, link, summary, pub_sec)
             FeedScraperHelper.update(key, link)
         endif
     except
@@ -192,10 +192,10 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE
     try
         link = tab.document.querySelectorAll('.Chapter_chapter__oSTBF')[1]
         inner = link.querySelectorAll('.Chapter_chapter__body__Iopda p')
-        subtitle = trim( inner[0].textContent )
-        title = "<#subtitle> (<#key>)"
+        episode = trim( inner[0].textContent )
+        subtitle = "<#episode> (<#key>)"
         summary = trim( inner[1].textContent )
-        if ignore_check or FeedScraperHelper.check(key, subtitle) then
+        if ignore_check or FeedScraperHelper.check(key, episode) then
             pub_sec = convert_date_to_sec(trim( inner[2].textContent ), 8)
             // urlを得るために実際にリンクをクリック
             link.click()
@@ -205,7 +205,7 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE
             sleep(1)
             href = tab.document.location.href
             result = get_feed_object(subtitle, href, summary, pub_sec)
-            FeedScraperHelper.update(key, subtitle)
+            FeedScraperHelper.update(key, episode)
         endif
     except
         result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
@@ -220,11 +220,11 @@ function ScrapeComicGamma(key: string, url: string, ignore_check: bool = FALSE)
         link = tab.document.querySelector('div.read__outer a')
         if ignore_check or FeedScraperHelper.check(key, link.id) then
             subtitle = trim( link.querySelector('.episode').textContent )
-            title = "<#subtitle> (<#key>)"
+            subtitle = "<#subtitle> (<#key>)"
             updated = link.querySelector('.episode__text').textContent
             pub_sec = convert_date_to_sec(updated, 12)
             summary = '公開日: ' + updated
-            result = get_feed_object(title, link.href, summary, pub_sec)
+            result = get_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.id)
         endif
     except
@@ -307,12 +307,12 @@ class Scraper
     // 指定時刻かどうか
     // dはG_TIME_WW
     function check(d, h)
+        result = int(time) == int(h)
         if this.day == WeekDay.Any then
-            result = h >= time and time < h + 1
-        else
-            d = convert_weekday[d]
-            result = ((day andb d) == d) and int(time) == int(h)
+            exit
         endif
+        d = convert_weekday[d]
+        result = ((this.day andb d) == d) and result
     fend
 
     // スクレイピング用関数はUObject、またはEMPTYを返す
