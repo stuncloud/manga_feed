@@ -98,7 +98,7 @@ struct FeedJson {
 
 impl FeedJson {
     fn sort_items(&mut self) {
-        self.items.sort_by(|a, b| b.compare(&a));
+        self.items.sort_by(|a, b| b.compare(a));
     }
 }
 
@@ -114,9 +114,9 @@ struct FeedItem {
 }
 impl FeedItem {
     fn compare(&self, other: &Self) -> std::cmp::Ordering {
-        let b = other.pub_sec as usize;
         let a = self.pub_sec as usize;
-        b.cmp(&a)
+        let b = other.pub_sec as usize;
+        a.cmp(&b)
     }
 }
 
