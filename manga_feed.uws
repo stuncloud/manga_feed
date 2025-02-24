@@ -70,10 +70,19 @@ function check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
         if ignore_check or scraper.check(G_TIME_WW, G_TIME_HH) then
             print_now("checking <#title>")
             if item := scraper.scrape() then
-                print_now("<#title> が更新されました")
-                print_now(item)
-                channel.items += item
-                result += 1
+                if type_of(item) == TYPE_ARRAY and length(item) > 0 then
+                    print_now("<#title> が更新されました")
+                    print_now(item)
+                    for _item in item
+                        channel.items += _item
+                        result += 1
+                    next
+                else
+                    print_now("<#title> が更新されました")
+                    print_now(item)
+                    channel.items += item
+                    result += 1
+                endif
             else
                 print_now("更新なし: <#title>")
             endif
