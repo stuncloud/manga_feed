@@ -7,7 +7,10 @@ const log_file = "manga_feed.log"
 scrapers = get_scrapers()
 
 print_now("Begin manga_feed")
-check_immediately(scrapers)
+select PARAM_STR[0]
+    case '--immediate', '-i'
+        check_immediately(scrapers)
+selend
 
 while TRUE
     repeat
