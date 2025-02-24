@@ -42,6 +42,36 @@ function get_scrapers()
             ScrapeBunshun,
             WeekDay.Fri, 8
         ),
+        Scraper(
+            "神引きのモナーク（仮）",
+            'https://www.pixiv.net/user/1504297/series/198227',
+            ScrapePixiv,
+            WeekDay.Mon, 4
+        ),
+        Scraper(
+            "ニセモノの錬金術師",
+            'https://www.pixiv.net/user/1504297/series/74316',
+            ScrapePixiv,
+            WeekDay.Tue, 4
+        ),
+        Scraper(
+            "ニセモノの錬金術師：第二部",
+            'https://www.pixiv.net/user/1504297/series/135359',
+            ScrapePixiv,
+            WeekDay.Wed, 4
+        ),
+        Scraper(
+            "ニセモノの錬金術師：第百部",
+            'https://www.pixiv.net/user/1504297/series/141994',
+            ScrapePixiv,
+            WeekDay.Thu, 4
+        ),
+        Scraper(
+            "決闘手術",
+            'https://www.pixiv.net/user/63740794/series/132782',
+            ScrapePixiv,
+            WeekDay.Sun, 4
+        ),
     ]
     result = Scrapers(items)
 fend
@@ -156,6 +186,51 @@ function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
     selend
 fend
 
+function ScrapePixiv(key: string, url: string, ignore_check: bool = FALSE, page = 1)
+    result = EMPTY
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        result = []
+        links = tab.document.querySelectorAll('main ul li a:nth-last-child(1)')
+        should_go_on = false
+        for link, i in links
+            should_go_on = FeedScraperHelper.check(key, link.href)
+            if ignore_check or should_go_on then
+                print link.href
+                print link.textContent
+                subtitle = trim( link.textContent )
+                subtitle = "<#subtitle> (<#key>)"
+                summary = trim( subtitle )
+                pub_sec = 0
+                result += get_feed_object(subtitle, link.href, summary, pub_sec)
+                if i == 0 then
+                    FeedScraperHelper.update(key, link.href)
+                endif
+            else
+                break
+            endif
+        next
+        // 2ページ目まで見る
+        if ! should_go_on and length(result) == length(links) and page < 2 then
+            page += 1
+            for a in tab.document.querySelectorAll('main nav a')
+                if trim( a.textContent ) == "<#page>" then
+                    a.click()
+                    tab.wait()
+                    more = ScrapePixiv(key, a.href, ignore_check, page)
+                    for item in more
+                        result += item
+                    next
+                    break
+                endif
+            next
+        endif
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+    tab.close()
+fend
+
 function ScrapeBunshun(key: string, url: string, ignore_check: bool = FALSE)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
@@ -165,7 +240,6 @@ function ScrapeBunshun(key: string, url: string, ignore_check: bool = FALSE)
         if ignore_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( li.querySelector('.subtitle').textContent )
             summary = trim( link.textContent )
-            print li.querySelector('time').dateTime
             pub_sec = convert_date_to_sec(li.querySelector('time').dateTime, 0)
             result = get_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.href)
