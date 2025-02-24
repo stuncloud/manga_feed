@@ -36,6 +36,12 @@ function get_scrapers()
             ScrapeKadoComi,
             WeekDay.Fri, 0
         ),
+        Scraper(
+            "俺、勇者じゃないですから。",
+            'https://bunshun.jp/list/author/60e7c5b077656106fe030000',
+            ScrapeBunshun,
+            WeekDay.Fri, 8
+        ),
     ]
     result = Scrapers(items)
 fend
@@ -140,9 +146,34 @@ function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
         case length(m := Match(date, "\d{4}/\d{2}/\d{2}")) > 0
             d = m[0]
             result = gettime(offset, d, offset_opt)
+        // yyyy-mm-dd hh:MM 表記
+        // 文春オンライン
+        case length(m := Match(date, "\d{4}-\d{2}-\d{2} \d{2}:\d{2}")) > 0
+            d = m[0] + ':00'
+            result = gettime(offset, d, offset_opt)
         default
             result = 0
     selend
+fend
+
+function ScrapeBunshun(key: string, url: string, ignore_check: bool = FALSE)
+    result = EMPTY
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        li = tab.document.querySelector('#page-content ul li')
+        link = li.querySelector('.title a')
+        if ignore_check or FeedScraperHelper.check(key, link.href) then
+            subtitle = trim( li.querySelector('.subtitle').textContent )
+            summary = trim( link.textContent )
+            print li.querySelector('time').dateTime
+            pub_sec = convert_date_to_sec(li.querySelector('time').dateTime, 0)
+            result = get_feed_object(subtitle, link.href, summary, pub_sec)
+            FeedScraperHelper.update(key, link.href)
+        endif
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+    tab.close()
 fend
 
 function ScrapeKadoComi(key: string, url: string, ignore_check: bool = FALSE)
