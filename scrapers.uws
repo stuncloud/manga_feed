@@ -196,8 +196,6 @@ function ScrapePixiv(key: string, url: string, ignore_check: bool = FALSE, page 
         for link, i in links
             should_go_on = FeedScraperHelper.check(key, link.href)
             if ignore_check or should_go_on then
-                print link.href
-                print link.textContent
                 subtitle = trim( link.textContent )
                 subtitle = "<#subtitle> (<#key>)"
                 summary = trim( subtitle )
