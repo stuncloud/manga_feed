@@ -343,10 +343,11 @@ function ScrapeToti(key: string, url: string, ignore_check: bool = FALSE)
     try
         link = tab.document.querySelector('.next a')
         if ignore_check or FeedScraperHelper.check(key, link.href) then
-            title = trim( link.querySelector('span.typesquare_option').textContent )
+            subtitle = trim( link.querySelector('span.typesquare_option').textContent )
+            subtitle = "<#subtitle> (<#key>)"
             summary = trim( tab.document.querySelector('header time').textContent )
             pub_sec = convert_date_to_sec(summary)
-            result = get_feed_object(title, link.href, summary, pub_sec)
+            result = get_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.href)
         endif
     except
