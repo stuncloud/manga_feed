@@ -13,6 +13,12 @@ function get_scrapers()
             WeekDay.Fri, 12
         ),
         Scraper(
+            "ネタバレが激しすぎるRPG",
+            'https://webcomicgamma.takeshobo.co.jp/manga/netabare_rpg/',
+            ScrapeComicGamma,
+            WeekDay.Fri, 12
+        ),
+        Scraper(
             "児玉まりあ文学集成",
             'https://to-ti.in/product/mariakodama',
             ScrapeToti,
