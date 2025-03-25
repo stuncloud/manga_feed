@@ -58,8 +58,8 @@ function load_channel()
     endif
 fend
 procedure save_channel(channel: uobject)
-    json = tojson(channel, true)
     channel.pubDate = PubDate().to_string()
+    json = tojson(channel, true)
     fput(fopen(channel_json, F_WRITE8 or F_AUTOCLOSE), json, F_ALLTEXT)
 fend
 
