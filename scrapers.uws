@@ -192,39 +192,34 @@ function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
     selend
 fend
 
-function ScrapePixiv(key: string, url: string, ignore_check: bool = FALSE, page = 1)
+function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE, page = 1)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        result = []
+        result = EMPTY
         links = tab.document.querySelectorAll('main ul li a:nth-last-child(1)')
         should_go_on = false
         for link, i in links
-            should_go_on = FeedScraperHelper.check(key, link.href)
-            if ignore_check or should_go_on then
-                subtitle = trim( link.textContent )
-                subtitle = "<#subtitle> (<#key>)"
-                summary = trim( subtitle )
-                pub_sec = 0
-                result += get_feed_object(subtitle, link.href, summary, pub_sec)
-                if i == 0 then
-                    FeedScraperHelper.update(key, link.href)
+            // 前回チェックしたものが見つかったら、その前 (次の話) をフィードとして返す
+            if ! FeedScraperHelper.check(key, link.href) then
+                if i > 0 then
+                    found = links[i - 1]
+                    subtitle = trim( found.textContent )
+                    subtitle = "<#subtitle> (<#key>)"
+                    summary = trim( subtitle )
+                    pub_sec = 0
+                    result = get_feed_object(subtitle, found.href, summary, pub_sec)
                 endif
-            else
-                break
             endif
         next
         // 2ページ目まで見る
-        if ! should_go_on and length(result) == length(links) and page < 2 then
+        if result == EMPTY and page < 2 then
             page += 1
             for a in tab.document.querySelectorAll('main nav a')
                 if trim( a.textContent ) == "<#page>" then
                     a.click()
                     tab.wait()
-                    more = ScrapePixiv(key, a.href, ignore_check, page)
-                    for item in more
-                        result += item
-                    next
+                    result = ScrapePixiv(key, a.href, ignore_update_check, page)
                     break
                 endif
             next
@@ -235,13 +230,13 @@ function ScrapePixiv(key: string, url: string, ignore_check: bool = FALSE, page 
     tab.close()
 fend
 
-function ScrapeBunshun(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeBunshun(key: string, url: string, ignore_update_check: bool = FALSE)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
         li = tab.document.querySelector('#page-content ul li')
         link = li.querySelector('.title a')
-        if ignore_check or FeedScraperHelper.check(key, link.href) then
+        if ignore_update_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( li.querySelector('.subtitle').textContent )
             summary = trim( link.textContent )
             pub_sec = convert_date_to_sec(li.querySelector('time').dateTime, 0)
@@ -254,13 +249,13 @@ function ScrapeBunshun(key: string, url: string, ignore_check: bool = FALSE)
     tab.close()
 fend
 
-function ScrapeKadoComi(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeKadoComi(key: string, url: string, ignore_update_check: bool = FALSE)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
         root = tab.document.querySelector('.EpisodesTabContents_root__VrJZ1')
         link = root.querySelector('ul li a')
-        if ignore_check or FeedScraperHelper.check(key, link.href) then
+        if ignore_update_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( link.querySelector('.EpisodeThumbnail_title__G1eWj').textContent )
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( root.querySelector('.EpisodesTabContents_nextUpdateDate__YDQiC').textContent )
@@ -274,13 +269,13 @@ function ScrapeKadoComi(key: string, url: string, ignore_check: bool = FALSE)
     tab.close()
 fend
 
-function ScrapeDrecom(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALSE)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
         div = tab.document.querySelector('.ebookListItem')
         link = div.querySelector('a').href
-        if ignore_check or FeedScraperHelper.check(key, link) then
+        if ignore_update_check or FeedScraperHelper.check(key, link) then
             subtitle = trim(div.querySelector('.ebookListItem_title').textContent)
             subtitle = "<#subtitle> (<#key>)"
             spans = div.querySelectorAll('.ebookListItem_publishDate span')
@@ -295,7 +290,7 @@ function ScrapeDrecom(key: string, url: string, ignore_check: bool = FALSE)
     tab.close()
 fend
 
-function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeGanGanOnline(key: string, url: string, ignore_update_check: bool = FALSE)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
@@ -304,7 +299,7 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE
         episode = trim( inner[0].textContent )
         subtitle = "<#episode> (<#key>)"
         summary = trim( inner[1].textContent )
-        if ignore_check or FeedScraperHelper.check(key, episode) then
+        if ignore_update_check or FeedScraperHelper.check(key, episode) then
             pub_sec = convert_date_to_sec(trim( inner[2].textContent ), 8)
             // urlを得るために実際にリンクをクリック
             link.click()
@@ -322,12 +317,12 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_check: bool = FALSE
     tab.close()
 fend
 
-function ScrapeComicGamma(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeComicGamma(key: string, url: string, ignore_update_check: bool = FALSE)
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
         link = tab.document.querySelector('div.read__outer a')
-        if ignore_check or FeedScraperHelper.check(key, link.id) then
+        if ignore_update_check or FeedScraperHelper.check(key, link.id) then
             subtitle = trim( link.querySelector('.episode').textContent )
             subtitle = "<#subtitle> (<#key>)"
             updated = link.querySelector('.episode__text').textContent
@@ -342,13 +337,13 @@ function ScrapeComicGamma(key: string, url: string, ignore_check: bool = FALSE)
     tab.close()
 fend
 
-function ScrapeToti(key: string, url: string, ignore_check: bool = FALSE)
+function ScrapeToti(key: string, url: string, ignore_update_check: bool = FALSE)
     result = EMPTY
 
     tab = FeedScraperHelper.browser.new(url)
     try
         link = tab.document.querySelector('.next a')
-        if ignore_check or FeedScraperHelper.check(key, link.href) then
+        if ignore_update_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( link.querySelector('span.typesquare_option').textContent )
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( tab.document.querySelector('header time').textContent )
@@ -426,8 +421,8 @@ class Scraper
     fend
 
     // スクレイピング用関数はUObject、またはEMPTYを返す
-    function scrape(ignore_check = FALSE)
-        result = fn(this.title, this.url, ignore_check)
+    function scrape(ignore_udpate_check = FALSE)
+        result = fn(this.title, this.url, ignore_udpate_check)
     fend
 
     function title()

@@ -9,9 +9,11 @@ scrapers = get_scrapers()
 print_now("Begin manga_feed")
 select PARAM_STR[0]
     case '--immediate', '-i'
+        print_now("初回チェック")
         check_immediately(scrapers)
+        print_now("初回チェック完了")
 selend
-
+print_now("監視開始")
 while TRUE
     repeat
         sleep(300)
@@ -24,16 +26,18 @@ procedure check_on_schedule(scrapers)
     channel = load_channel()
     remove_old_item(channel)
     cnt = check_for_update(scrapers, channel)
-    gen_rss_and_push(channel, cnt)
+    // gen_rss_and_push(channel, cnt)
     save_channel(channel)
+    gen_rss_and_push2(cnt)
 fend
 
 procedure check_immediately(scrapers)
     channel = load_channel()
     remove_old_item(channel)
     cnt = check_for_update(scrapers, channel, true)
-    gen_rss_and_push(channel, cnt)
+    // gen_rss_and_push(channel, cnt)
     save_channel(channel)
+    gen_rss_and_push2(cnt)
 fend
 
 function load_channel()
@@ -41,17 +45,17 @@ function load_channel()
         json = fget(fopen(channel_json, F_READ or F_AUTOCLOSE), F_ALLTEXT)
         try
             result = fromjson(json)
-            exit
         except
+        finally
+            result = @{
+                "title": "Webまんがフィード",
+                "link": "https://github.com/stuncloud/manga_feed",
+                "pubDate": null,
+                "description": "Webまんがフィードを自力で作っていくやつ",
+                "items": []
+            }@
         endtry
     endif
-    result = @{
-        "title": "Webまんがフィード",
-        "link": "https://github.com/stuncloud/manga_feed",
-        "pubDate": null,
-        "description": "Webまんがフィードを自力で作っていくやつ",
-        "items": []
-    }@
 fend
 procedure save_channel(channel: uobject)
     json = tojson(channel, true)
@@ -92,19 +96,34 @@ function check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
         endif
     next
 fend
-procedure gen_rss_and_push(channel, cnt)
+// procedure gen_rss_and_push(channel, cnt)
+//     print_now("更新数: <#cnt>")
+//     if cnt > 0 then
+//         channel.pubDate = PubDate().to_string()
+//         error = format(chr(0), 512)
+//         if generate("<#channel>", out_xml, error) then
+//             print_now("rss生成: 成功")
+//             push_to_github(out_xml, cnt)
+//         else
+//             print_now("rss生成: 失敗")
+//             log = print_now("エラー(<#error>)")
+//             fopen(log_file, F_APPEND, log)
+//         endif
+//     endif
+// fend
+procedure gen_rss_and_push2(cnt)
     print_now("更新数: <#cnt>")
     if cnt > 0 then
-        channel.pubDate = PubDate().to_string()
-        error = format(chr(0), 512)
-        if generate("<#channel>", out_xml, error) then
-            print_now("rss生成: 成功")
-            push_to_github(out_xml, cnt)
-        else
-            print_now("rss生成: 失敗")
-            log = print_now("エラー(<#error>)")
-            fopen(log_file, F_APPEND, log)
-        endif
+        res = shexec("rssgenexe\target\release\rssgen.exe", "<#channel_json> <#out_xml>")
+        push_to_github(out_xml, cnt)
+        // if res then
+        //     print_now("rss生成: 成功")
+        //     push_to_github(out_xml, cnt)
+        // else
+        //     print_now("rss生成: 失敗")
+        //     // log = print_now("エラー(<#error>)")
+        //     // fopen(log_file, F_APPEND, log)
+        // endif
     endif
 fend
 
@@ -137,4 +156,4 @@ class Filter
     fend
 endclass
 
-def_dll generate(wstring, wstring, var wstring):bool:rssgen\target\release\rssgen.dll
+// def_dll generate(wstring, wstring, var wstring):bool:rssgen\target\release\rssgen.dll
