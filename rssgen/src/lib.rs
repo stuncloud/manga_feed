@@ -11,6 +11,7 @@ use rss::{Channel, ChannelBuilder, ItemBuilder};
 pub unsafe extern "C" fn generate(json: *const u16, out: *const u16, error: *mut u16) -> bool {
     let json = string_from_ptr(json);
     let out = string_from_ptr(out);
+    dbg!(&out);
     let feed = match serde_json::from_str::<FeedJson>(&json) {
         Ok(mut feed) => {
             feed.sort_items();
@@ -42,6 +43,7 @@ pub unsafe extern "C" fn generate(json: *const u16, out: *const u16, error: *mut
             drop(f);
         },
         Err(e) => {
+            dbg!(&e);
             set_error(error, e);
             return false
         },
@@ -52,12 +54,14 @@ pub unsafe extern "C" fn generate(json: *const u16, out: *const u16, error: *mut
 
 unsafe fn set_error<S: Display>(error: *mut u16, msg: S) {
     let utf16 = msg.to_string().encode_utf16().collect::<Vec<_>>();
-    let count = utf16.len();
+    let count = utf16.len().min(500);
     let src = utf16.as_ptr() as _;
     error.copy_from_nonoverlapping(src, count);
 }
 unsafe fn string_from_ptr(p: *const u16) -> String {
+    dbg!(p);
     let len = (0..).take_while(|&i| *p.offset(i) != 0).count();
+    dbg!(len);
     let wide = std::slice::from_raw_parts(p, len);
 
     String::from_utf16_lossy(wide)
@@ -121,8 +125,11 @@ impl FeedItem {
 }
 
 
+
 #[cfg(test)]
 mod test {
+    use std::io::Read;
+
     fn to_utf16(str: &str) -> Vec<u16> {
         str.encode_utf16().chain(std::iter::once(0)).collect()
     }
@@ -158,5 +165,19 @@ mod test {
                 super::generate(json.as_ptr(), out.as_ptr(), error.as_mut_ptr() as _)
             }
         );
+    }
+    #[test]
+    fn test_generate_from_file() {
+        let mut error = vec![0; 500];
+        let out = to_utf16("target/test2.xml");
+        let mut file = std::fs::File::open("../channel.json").expect("failed to open file.");
+        let mut buf = String::new();
+        file.read_to_string(&mut buf).expect("failed to read file.");
+        let json = to_utf16(&buf);
+        assert!(
+            unsafe {
+                super::generate(json.as_ptr(), out.as_ptr(), error.as_mut_ptr())
+            }
+        )
     }
 }
