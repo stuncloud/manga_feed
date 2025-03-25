@@ -196,24 +196,24 @@ function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        result = EMPTY
+        result = []
         links = tab.document.querySelectorAll('main ul li a:nth-last-child(1)')
-        should_go_on = false
+        first_link = EMPTY
         for link, i in links
-            // 前回チェックしたものが見つかったら、その前 (次の話) をフィードとして返す
-            if ! FeedScraperHelper.check(key, link.href) then
-                if i > 0 then
-                    found = links[i - 1]
-                    subtitle = trim( found.textContent )
-                    subtitle = "<#subtitle> (<#key>)"
-                    summary = trim( subtitle )
-                    pub_sec = 0
-                    result = get_feed_object(subtitle, found.href, summary, pub_sec)
+            if FeedScraperHelper.check(key, link.href) then
+                if i == 0 and page == 1 then
+                    // 1ページ目1番目が更新されていたらiniを更新
+                    first_link = link.href
                 endif
+                subtitle = trim( link.textContent )
+                subtitle = "<#subtitle> (<#key>)"
+                summary = trim( subtitle )
+                pub_sec = 0
+                result += get_feed_object(subtitle, link.href, summary, pub_sec)
             endif
         next
-        // 2ページ目まで見る
-        if result == EMPTY and page < 2 then
+        // リンクの数とフィードの数が一致していた場合2ページ目を考慮する
+        if length(result) == length(links) and page < 2 then
             page += 1
             for a in tab.document.querySelectorAll('main nav a')
                 if trim( a.textContent ) == "<#page>" then
@@ -223,6 +223,9 @@ function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE
                     break
                 endif
             next
+        endif
+        if first_link != EMPTY then
+            FeedScraperHelper.update(key, first_link)
         endif
     except
         result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
