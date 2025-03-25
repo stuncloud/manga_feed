@@ -22,22 +22,18 @@ while TRUE
     check_on_schedule(scrapers)
 wend
 
-procedure check_on_schedule(scrapers)
+procedure check_on_schedule(scrapers, immediate = FALSE)
     channel = load_channel()
     remove_old_item(channel)
-    cnt = check_for_update(scrapers, channel)
+    if (cnt := check_for_update(scrapers, channel, immediate)) > 0 then
     // gen_rss_and_push(channel, cnt)
-    save_channel(channel)
-    gen_rss_and_push2(cnt)
+        save_channel(channel)
+        gen_rss_and_push2(cnt)
+    endif
 fend
 
 procedure check_immediately(scrapers)
-    channel = load_channel()
-    remove_old_item(channel)
-    cnt = check_for_update(scrapers, channel, true)
-    // gen_rss_and_push(channel, cnt)
-    save_channel(channel)
-    gen_rss_and_push2(cnt)
+    check_on_schedule(scrapers, TRUE)
 fend
 
 function load_channel()
@@ -61,6 +57,7 @@ procedure save_channel(channel: uobject)
     channel.pubDate = PubDate().to_string()
     json = tojson(channel, true)
     fput(fopen(channel_json, F_WRITE8 or F_AUTOCLOSE), json, F_ALLTEXT)
+    sleep(0.5)
 fend
 
 procedure remove_old_item(channel: uobject)
@@ -70,12 +67,12 @@ procedure remove_old_item(channel: uobject)
     channel.items = items
 fend
 
-function check_for_update(scrapers, channel: uobject, ignore_check = FALSE)
+function check_for_update(scrapers, channel: uobject, ignore_day_check = FALSE)
     gettime()
     result = 0
     for scraper in scrapers.as_array()
         title = scraper.title()
-        if ignore_check or scraper.check(G_TIME_WW, G_TIME_HH) then
+        if ignore_day_check or scraper.check(G_TIME_WW, G_TIME_HH) then
             print_now("checking <#title>")
             if item := scraper.scrape() then
                 if type_of(item) == TYPE_ARRAY and length(item) > 0 then
@@ -114,16 +111,14 @@ fend
 // fend
 procedure gen_rss_and_push2(cnt)
     print_now("更新数: <#cnt>")
-    if cnt > 0 then
-        res = shexec("rssgenexe\target\release\rssgen.exe", "<#channel_json> <#out_xml>")
-        if res then
-            print_now("rss生成: 成功")
-            push_to_github(out_xml, cnt)
-        else
-            print_now("rss生成: 失敗")
-            // log = print_now("エラー(<#error>)")
-            // fopen(log_file, F_APPEND, log)
-        endif
+    res = shexec("rssgenexe\target\release\rssgen.exe", "<#channel_json> <#out_xml>")
+    if res then
+        print_now("rss生成: 成功")
+        push_to_github(out_xml, cnt)
+    else
+        print_now("rss生成: 失敗")
+        // log = print_now("エラー(<#error>)")
+        // fopen(log_file, F_APPEND, log)
     endif
 fend
 
