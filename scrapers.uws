@@ -210,6 +210,8 @@ function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE
                 summary = trim( subtitle )
                 pub_sec = 0
                 result += get_feed_object(subtitle, link.href, summary, pub_sec)
+            else
+                break
             endif
         next
         // リンクの数とフィードの数が一致していた場合2ページ目を考慮する
