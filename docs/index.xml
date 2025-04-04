@@ -4,72 +4,13 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
+    <pubDate>Fri, 04 Apr 2025 08:03:38 +0900</pubDate>
     <item>
-      <title>#211 黄金城での戦い② (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128710516</link>
-      <description><![CDATA[#211 黄金城での戦い② (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#210 黄金城での戦い① (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128681730</link>
-      <description><![CDATA[#210 黄金城での戦い① (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#209 シブハラとの戦い㉚ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128613417</link>
-      <description><![CDATA[#209 シブハラとの戦い㉚ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#208 シブハラとの戦い㉙ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128430357</link>
-      <description><![CDATA[#208 シブハラとの戦い㉙ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#207 シブハラとの戦い㉘ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128395218</link>
-      <description><![CDATA[#207 シブハラとの戦い㉘ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#206 シブハラとの戦い㉗ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128343993</link>
-      <description><![CDATA[#206 シブハラとの戦い㉗ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#205 シブハラとの戦い㉖ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128331814</link>
-      <description><![CDATA[#205 シブハラとの戦い㉖ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#204 シブハラとの戦い㉕ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128292454</link>
-      <description><![CDATA[#204 シブハラとの戦い㉕ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#203 シブハラとの戦い㉔ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128181111</link>
-      <description><![CDATA[#203 シブハラとの戦い㉔ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#202 シブハラとの戦い㉓ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128092148</link>
-      <description><![CDATA[#202 シブハラとの戦い㉓ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
-    </item>
-    <item>
-      <title>#201 シブハラとの戦い㉒ (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/128057602</link>
-      <description><![CDATA[#201 シブハラとの戦い㉒ (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 31 Mar 2025 04:03:03 +0900</pubDate>
+      <title>[解析エラー] 俺、勇者じゃないですから。</title>
+      <link>https://bunshun.jp/list/author/60e7c5b077656106fe030000</link>
+      <description><![CDATA[scrapers.uws 243行目: link = li.querySelector('.title a')
+[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
+      <pubDate>Fri, 04 Apr 2025 08:03:38 +0900</pubDate>
     </item>
   </channel>
 </rss>
