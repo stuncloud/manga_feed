@@ -4,13 +4,24 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 04 Apr 2025 08:03:38 +0900</pubDate>
+    <pubDate>Fri, 04 Apr 2025 12:03:50 +0900</pubDate>
     <item>
-      <title>[解析エラー] 俺、勇者じゃないですから。</title>
-      <link>https://bunshun.jp/list/author/60e7c5b077656106fe030000</link>
-      <description><![CDATA[scrapers.uws 243行目: link = li.querySelector('.title a')
-[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
-      <pubDate>Fri, 04 Apr 2025 08:03:38 +0900</pubDate>
+      <title>第2話① 血生臭いぞ‼ジンロー村のジン・ロウ村長 (ネタバレが激しすぎるRPG)</title>
+      <link>https://webcomicgamma.takeshobo.co.jp/_files/netabare_rpg/002_1/</link>
+      <description><![CDATA[公開日: 2025年4月 4日]]></description>
+      <pubDate>Fri, 04 Apr 2025 12:03:48 +0900</pubDate>
+    </item>
+    <item>
+      <title>第3話② (ウは宇宙ヤバイのウ！)</title>
+      <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/003_2/</link>
+      <description><![CDATA[公開日: 2025年4月 4日]]></description>
+      <pubDate>Fri, 04 Apr 2025 12:03:46 +0900</pubDate>
+    </item>
+    <item>
+      <title>第19話① (ブレイド＆バスタード)</title>
+      <link>https://drecom-media.jp/viewer/e/425</link>
+      <description><![CDATA[公開終了：2025年4月18日 12時00分]]></description>
+      <pubDate>Fri, 04 Apr 2025 12:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
