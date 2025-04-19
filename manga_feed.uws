@@ -42,7 +42,6 @@ function load_channel()
         try
             result = fromjson(json)
         except
-        finally
             result = @{
                 "title": "Webまんがフィード",
                 "link": "https://github.com/stuncloud/manga_feed",
