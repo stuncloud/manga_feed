@@ -114,6 +114,9 @@ procedure gen_rss_and_push2(cnt)
     print_now("更新数: <#cnt>")
     res = shexec("rssgenexe\target\release\rssgenexe.exe", "<#channel_json> <#out_xml>")
     if res then
+        repeat
+            sleep(0.2)
+        until fopen(out_xml, F_EXISTS)
         print_now("rss生成: 成功")
         push_to_github(out_xml, cnt)
     else
@@ -131,8 +134,10 @@ fend
 
 procedure push_to_github(xml, cnt)
     print_now("push処理開始")
-    print doscmd("git add <#out_xml>")
+    print doscmd("git add <#xml>")
+    sleep(1)
     print doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
+    sleep(1)
     print doscmd("git push")
     print_now("push処理終了")
 fend
