@@ -4,7 +4,19 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Mon, 21 Jul 2025 11:17:37 +0900</pubDate>
+    <pubDate>Fri, 25 Jul 2025 12:01:56 +0900</pubDate>
+    <item>
+      <title>第7話① (ウは宇宙ヤバイのウ！)</title>
+      <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/007_1/</link>
+      <description><![CDATA[公開日: 2025年7月25日]]></description>
+      <pubDate>Fri, 25 Jul 2025 12:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>第5話② 宿命の親子対決!?勇者VSユウ・シャノチーチ (ネタバレが激しすぎるRPG)</title>
+      <link>https://webcomicgamma.takeshobo.co.jp/_files/netabare_rpg/005_2/</link>
+      <description><![CDATA[公開日: 2025年7月25日]]></description>
+      <pubDate>Fri, 25 Jul 2025 12:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>#236 強者の責務③ (神引きのモナーク（仮）)</title>
       <link>https://www.pixiv.net/artworks/132895498</link>
@@ -274,24 +286,6 @@
       <link>https://to-ti.in/story/kodama_ad_04</link>
       <description><![CDATA['25/04/30 UPDATE]]></description>
       <pubDate>Wed, 30 Apr 2025 00:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>98話-1 (無能なナナ)</title>
-      <link>https://www.ganganonline.com/title/72/chapter/93141</link>
-      <description><![CDATA[再起]]></description>
-      <pubDate>Sat, 26 Apr 2025 08:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第4話① (ウは宇宙ヤバイのウ！)</title>
-      <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/004_1/</link>
-      <description><![CDATA[公開日: 2025年4月25日]]></description>
-      <pubDate>Fri, 25 Apr 2025 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>「俺、勇者じゃないですから。」第43話＜後編＞</title>
-      <link>https://bunshun.jp/articles/-/78318</link>
-      <description><![CDATA[彼女たちを3日間避けてる俺（勇者）「俺にそんな価値なんてないのに…」完全にネガティブ思考に落ちてます]]></description>
-      <pubDate>Fri, 25 Apr 2025 06:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
