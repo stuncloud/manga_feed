@@ -4,7 +4,19 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sat, 26 Jul 2025 08:02:08 +0900</pubDate>
+    <pubDate>Fri, 01 Aug 2025 12:02:36 +0900</pubDate>
+    <item>
+      <title>第7話② (ウは宇宙ヤバイのウ！)</title>
+      <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/007_2/</link>
+      <description><![CDATA[公開日: 2025年8月 1日]]></description>
+      <pubDate>Fri, 01 Aug 2025 12:02:32 +0900</pubDate>
+    </item>
+    <item>
+      <title>第21話③ (ブレイド＆バスタード)</title>
+      <link>https://drecom-media.jp/viewer/e/554</link>
+      <description><![CDATA[公開終了：2025年8月15日 12時00分]]></description>
+      <pubDate>Fri, 01 Aug 2025 12:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>101話-1 (無能なナナ)</title>
       <link>https://www.ganganonline.com/title/72/chapter/97419</link>
@@ -274,24 +286,6 @@
       <link>https://bunshun.jp/articles/-/78319</link>
       <description><![CDATA[「どうしてSランクダンジョンに入らないの？」この世界の自称神様からハッパをかけられる俺（勇者）]]></description>
       <pubDate>Fri, 09 May 2025 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第4話② (ウは宇宙ヤバイのウ！)</title>
-      <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/004_2/</link>
-      <description><![CDATA[公開日: 2025年5月 2日]]></description>
-      <pubDate>Fri, 02 May 2025 12:03:45 +0900</pubDate>
-    </item>
-    <item>
-      <title>第19話③ (ブレイド＆バスタード)</title>
-      <link>https://drecom-media.jp/viewer/e/452</link>
-      <description><![CDATA[公開終了：2025年5月16日 12時00分]]></description>
-      <pubDate>Fri, 02 May 2025 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>4巻発売告知 (児玉まりあ文学集成)</title>
-      <link>https://to-ti.in/story/kodama_ad_04</link>
-      <description><![CDATA['25/04/30 UPDATE]]></description>
-      <pubDate>Wed, 30 Apr 2025 00:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
