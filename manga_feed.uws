@@ -134,6 +134,7 @@ fend
 
 procedure push_to_github(xml, cnt)
     print_now("push処理開始")
+    sleep(1)
     print doscmd("git add <#xml>")
     sleep(1)
     print doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
