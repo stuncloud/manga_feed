@@ -4,7 +4,56 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sat, 09 Aug 2025 08:02:13 +0900</pubDate>
+    <pubDate>Thu, 14 Aug 2025 12:13:41 +0900</pubDate>
+    <item>
+      <title>#109 ニセモノの錬金術師　第一部エピローグ(１６ページ)とお知らせ (ニセモノの錬金術師)</title>
+      <link>https://www.pixiv.net/artworks/88842581</link>
+      <description><![CDATA[#109 ニセモノの錬金術師　第一部エピローグ(１６ページ)とお知らせ (ニセモノの錬金術師)]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:33 +0900</pubDate>
+    </item>
+    <item>
+      <title>#107 ほのぼのの錬金術師２ (ニセモノの錬金術師)</title>
+      <link>https://www.pixiv.net/artworks/88570400</link>
+      <description><![CDATA[#107 ほのぼのの錬金術師２ (ニセモノの錬金術師)]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:33 +0900</pubDate>
+    </item>
+    <item>
+      <title>#106 ほのぼのの錬金術師１ (ニセモノの錬金術師)</title>
+      <link>https://www.pixiv.net/artworks/88462964</link>
+      <description><![CDATA[#106 ほのぼのの錬金術師１ (ニセモノの錬金術師)]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:33 +0900</pubDate>
+    </item>
+    <item>
+      <title>#105 ニセモノの錬金術師303(第一部完) (ニセモノの錬金術師)</title>
+      <link>https://www.pixiv.net/artworks/88141006</link>
+      <description><![CDATA[#105 ニセモノの錬金術師303(第一部完) (ニセモノの錬金術師)]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:33 +0900</pubDate>
+    </item>
+    <item>
+      <title>#104 pixiv版ニセモノの錬金術師第一部はここまでです (ニセモノの錬金術師)</title>
+      <link>https://www.pixiv.net/artworks/108719197</link>
+      <description><![CDATA[#104 pixiv版ニセモノの錬金術師第一部はここまでです (ニセモノの錬金術師)]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:33 +0900</pubDate>
+    </item>
+    <item>
+      <title>#112 サコガシラは静かに暮らしたい② (ニセモノの錬金術師)</title>
+      <link>https://www.pixiv.net/artworks/91764313</link>
+      <description><![CDATA[#112 サコガシラは静かに暮らしたい② (ニセモノの錬金術師)]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:32 +0900</pubDate>
+    </item>
+    <item>
+      <title>#111 サコガシラは静かに暮らしたい① (ニセモノの錬金術師)</title>
+      <link>https://www.pixiv.net/artworks/91746034</link>
+      <description><![CDATA[#111 サコガシラは静かに暮らしたい① (ニセモノの錬金術師)]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:32 +0900</pubDate>
+    </item>
+    <item>
+      <title>[解析エラー] 俺、勇者じゃないですから。</title>
+      <link>https://bunshun.jp/list/author/60e7c5b077656106fe030000</link>
+      <description><![CDATA[scrapers.uws 243行目: link = li.querySelector('.title a')
+[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
+      <pubDate>Thu, 14 Aug 2025 12:13:22 +0900</pubDate>
+    </item>
     <item>
       <title>101話-2 (無能なナナ)</title>
       <link>https://www.ganganonline.com/title/72/chapter/97416</link>
@@ -340,18 +389,6 @@
       <link>https://bunshun.jp/articles/-/78320</link>
       <description><![CDATA[「君のことをずっと見てきたからね10年だよ10年」自称神様はイチバンの理解者！？]]></description>
       <pubDate>Fri, 23 May 2025 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第3話② ツギノヒガ・イーシャ死す (ネタバレが激しすぎるRPG)</title>
-      <link>https://webcomicgamma.takeshobo.co.jp/_files/netabare_rpg/003_2/</link>
-      <description><![CDATA[公開日: 2025年5月16日]]></description>
-      <pubDate>Fri, 16 May 2025 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第20話① (ブレイド＆バスタード)</title>
-      <link>https://drecom-media.jp/viewer/e/468</link>
-      <description><![CDATA[公開終了：2025年6月6日 12時00分]]></description>
-      <pubDate>Fri, 16 May 2025 12:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
