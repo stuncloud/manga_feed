@@ -3,38 +3,17 @@ call scrapers.uws
 
 const out_xml = ".\docs\index.xml"
 const channel_json = ".\channel.json"
-const log_file = "manga_feed.log"
+const log_file = ".\manga_feed.log"
 scrapers = get_scrapers()
 
-print_now("Begin manga_feed")
-select PARAM_STR[0]
-    case '--immediate', '-i'
-        print_now("初回チェック")
-        check_immediately(scrapers)
-        print_now("初回チェック完了")
-selend
-print_now("監視開始")
-while TRUE
-    repeat
-        sleep(300)
-        gettime()
-    until 0 <= G_TIME_NN and G_TIME_NN <= 5 // n時0分から5分の間になるまで待つ
-    check_on_schedule(scrapers)
-wend
+channel = load_channel()
+remove_old_item(channel)
+if (cnt := check_for_update(scrapers, channel)) > 0 then
+    save_channel(channel)
+    gen_rss_and_push2(cnt)
+endif
+log(cnt)
 
-procedure check_on_schedule(scrapers, immediate = FALSE)
-    channel = load_channel()
-    remove_old_item(channel)
-    if (cnt := check_for_update(scrapers, channel, immediate)) > 0 then
-    // gen_rss_and_push(channel, cnt)
-        save_channel(channel)
-        gen_rss_and_push2(cnt)
-    endif
-fend
-
-procedure check_immediately(scrapers)
-    check_on_schedule(scrapers, TRUE)
-fend
 
 function load_channel()
     if fopen(channel_json, F_EXISTS) then
@@ -68,80 +47,85 @@ procedure remove_old_item(channel: uobject)
     channel.items = items
 fend
 
-function check_for_update(scrapers, channel: uobject, ignore_day_check = FALSE)
+function check_for_update(scrapers, channel: uobject)
     gettime()
     result = 0
     for scraper in scrapers.as_array()
         title = scraper.title()
-        if ignore_day_check or scraper.check(G_TIME_WW, G_TIME_HH) then
-            print_now("checking <#title>")
+        if scraper.check(G_TIME_WW, G_TIME_HH) then
+            // print_now("checking <#title>")
             if item := scraper.scrape() then
                 if type_of(item) == TYPE_ARRAY and length(item) > 0 then
-                    print_now("<#title> が更新されました")
-                    print_now(item)
+                    log("<#title> が更新されました")
+                    // print_now(item)
                     for _item in item
                         channel.items += _item
                         result += 1
                     next
                 else
-                    print_now("<#title> が更新されました")
-                    print_now(item)
+                    log("<#title> が更新されました")
+                    // print_now(item)
                     channel.items += item
                     result += 1
                 endif
             else
-                print_now("更新なし: <#title>")
+                log("更新なし: <#title>")
             endif
         endif
     next
 fend
-// procedure gen_rss_and_push(channel, cnt)
-//     print_now("更新数: <#cnt>")
-//     if cnt > 0 then
-//         channel.pubDate = PubDate().to_string()
-//         error = format(chr(0), 512)
-//         if generate("<#channel>", out_xml, error) then
-//             print_now("rss生成: 成功")
-//             push_to_github(out_xml, cnt)
-//         else
-//             print_now("rss生成: 失敗")
-//             log = print_now("エラー(<#error>)")
-//             fopen(log_file, F_APPEND, log)
-//         endif
-//     endif
-// fend
 procedure gen_rss_and_push2(cnt)
-    print_now("更新数: <#cnt>")
+    // print_now("更新数: <#cnt>")
     res = shexec("rssgenexe\target\release\rssgenexe.exe", "<#channel_json> <#out_xml>")
     if res then
         repeat
             sleep(0.2)
         until fopen(out_xml, F_EXISTS)
-        print_now("rss生成: 成功")
+        // print_now("rss生成: 成功")
         push_to_github(out_xml, cnt)
     else
-        print_now("rss生成: 失敗")
+        // print_now("rss生成: 失敗")
+        log(0, "rss生成失敗")
         // log = print_now("エラー(<#error>)")
         // fopen(log_file, F_APPEND, log)
     endif
 fend
 
-function print_now(msg)
-    now = format(gettime(), '%F %T')
-    result = "<#now>: <#msg>"
-    print result
-fend
+// function print_now(msg)
+//     now = format(gettime(), '%F %T')
+//     result = "<#now>: <#msg>"
+//     print result
+// fend
 
 procedure push_to_github(xml, cnt)
-    print_now("push処理開始")
+    // print_now("push処理開始")
     sleep(1)
     print doscmd("git add <#xml>")
     sleep(1)
     print doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
     sleep(1)
     print doscmd("git push")
-    print_now("push処理終了")
+    // print_now("push処理終了")
 fend
+
+procedure log(msg, error: bool = FALSE)
+    now = format(gettime(), '%F %T')
+    if error then
+        fopen(log_file, F_APPEND, "<#now> [ERR] <#error>")
+    else
+        if type_of(msg) = TYPE_NUMBER then
+            cnt = msg
+            if cnt > 0 then
+                fopen(log_file, F_APPEND, "<#now> [LOG] <#cnt> 件更新")
+            else
+                fopen(log_file, F_APPEND, "<#now> [LOG] 更新なし")
+            endif
+        else
+            fopen(log_file, F_APPEND, "<#now> [LOG] <#MSG>")
+        endif
+    endif
+fend
+
 
 class Filter
     dim arr

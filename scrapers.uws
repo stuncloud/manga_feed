@@ -4,74 +4,74 @@ function get_scrapers()
             "スターウォーク",
             'https://webcomicgamma.takeshobo.co.jp/manga/starwalk/',
             ScrapeComicGamma,
-            WeekDay.Fri, 12
+            WeekDay.Fri, PM
         ),
         Scraper(
             "ウは宇宙ヤバイのウ！",
             'https://webcomicgamma.takeshobo.co.jp/manga/uchuuyabai/',
             ScrapeComicGamma,
-            WeekDay.Fri, 12
+            WeekDay.Fri, PM
         ),
         Scraper(
             "ネタバレが激しすぎるRPG",
             'https://webcomicgamma.takeshobo.co.jp/manga/netabare_rpg/',
             ScrapeComicGamma,
-            WeekDay.Fri, 12
+            WeekDay.Fri, PM
         ),
         Scraper(
             "児玉まりあ文学集成",
             'https://to-ti.in/product/mariakodama',
             ScrapeToti,
-            WeekDay.Sun, 0
+            WeekDay.Sun, AM
         ),
         Scraper(
             "無能なナナ",
             'https://www.ganganonline.com/title/72',
             ScrapeGanGanOnline,
-            WeekDay.Sat, 8
+            WeekDay.Sat, AM
         ),
         Scraper(
             "ブレイド＆バスタード",
             'https://drecom-media.jp/drecomics/series/blade',
             ScrapeDrecom,
-            WeekDay.Fri, 12
+            WeekDay.Fri, PM
         ),
         Scraper(
             "鍋に弾丸を受けながら",
             'https://comic-walker.com/detail/KC_003969_S?episodeType=latest',
             ScrapeKadoComi,
-            WeekDay.Fri, 0
+            WeekDay.Fri, AM
         ),
         Scraper(
             "俺、勇者じゃないですから。",
             'https://bunshun.jp/list/author/60e7c5b077656106fe030000',
             ScrapeBunshun,
-            WeekDay.Fri, 8
+            WeekDay.Fri, AM
         ),
         Scraper(
             "神引きのモナーク（仮）",
             'https://www.pixiv.net/user/1504297/series/198227',
             ScrapePixiv,
-            WeekDay.Mon, 4
+            WeekDay.Any, AM
         ),
-        Scraper(
-            "ニセモノの錬金術師",
-            'https://www.pixiv.net/user/1504297/series/74316',
-            ScrapePixiv,
-            WeekDay.Tue, 4
-        ),
-        Scraper(
-            "ニセモノの錬金術師：第二部",
-            'https://www.pixiv.net/user/1504297/series/135359',
-            ScrapePixiv,
-            WeekDay.Wed, 4
-        ),
-        Scraper(
-            "ニセモノの錬金術師：第百部",
-            'https://www.pixiv.net/user/1504297/series/141994',
-            ScrapePixiv,
-            WeekDay.Thu, 4
-        ),
+        // Scraper(
+        //     "ニセモノの錬金術師",
+        //     'https://www.pixiv.net/user/1504297/series/74316',
+        //     ScrapePixiv,
+        //     WeekDay.Tue, 4
+        // ),
+        // Scraper(
+        //     "ニセモノの錬金術師：第二部",
+        //     'https://www.pixiv.net/user/1504297/series/135359',
+        //     ScrapePixiv,
+        //     WeekDay.Wed, 4
+        // ),
+        // Scraper(
+        //     "ニセモノの錬金術師：第百部",
+        //     'https://www.pixiv.net/user/1504297/series/141994',
+        //     ScrapePixiv,
+        //     WeekDay.Thu, 4
+        // ),
         Scraper(
             "決闘手術",
             'https://www.pixiv.net/user/63740794/series/132782',
@@ -414,10 +414,16 @@ class Scraper
         this.time = time
     fend
 
-    // 指定時刻かどうか
-    // dはG_TIME_WW
+    // 午前・午後と曜日が合ってるかどうか
     function check(d, h)
-        result = int(time) == int(h)
+        // result = int(time) == int(h)
+        if time == AM andl h < 12 then
+            result = TRUE
+        elseif time == PM andl 12 <= h then
+            result = TRUE
+        else
+            result = FALSE
+        endif
         if this.day == WeekDay.Any then
             exit
         endif
@@ -443,7 +449,7 @@ enum WeekDay
     Fri = 16
     Sat = 32
     Sun = 64
-    Any = 128
+    Any = 127
 endenum
 hash public convert_weekday
     "<#G_WEEKDAY_MON>" = WeekDay.Mon
@@ -454,3 +460,6 @@ hash public convert_weekday
     "<#G_WEEKDAY_SAT>" = WeekDay.Sat
     "<#G_WEEKDAY_SUN>" = WeekDay.Sun
 endhash
+
+const AM = 0
+const PM = 1
