@@ -76,8 +76,13 @@ function get_scrapers()
             "決闘手術",
             'https://www.pixiv.net/user/63740794/series/132782',
             ScrapePixiv,
-            WeekDay.Sun, 4
+            WeekDay.Sun, AM
         ),
+        // Scraper(
+        //     "dummy", "",
+        //     |key, url, check=>get_feed_object('subtitle', 'link', 'summary', 0.0)|,
+        //     WeekDay.Any, AM
+        // )
     ]
     result = Scrapers(items)
 fend
@@ -191,6 +196,7 @@ function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
             result = 0
     selend
 fend
+
 
 function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE, page = 1)
     result = EMPTY

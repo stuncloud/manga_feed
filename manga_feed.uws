@@ -18,9 +18,8 @@ log(cnt)
 function load_channel()
     if fopen(channel_json, F_EXISTS) then
         json = fget(fopen(channel_json, F_READ or F_AUTOCLOSE), F_ALLTEXT)
-        try
-            result = fromjson(json)
-        except
+        result = fromjson(json)
+        if result == EMPTY then
             result = @{
                 "title": "Webまんがフィード",
                 "link": "https://github.com/stuncloud/manga_feed",
@@ -28,7 +27,7 @@ function load_channel()
                 "description": "Webまんがフィードを自力で作っていくやつ",
                 "items": []
             }@
-        endtry
+        endif
     endif
 fend
 procedure save_channel(channel: uobject)
@@ -41,8 +40,8 @@ procedure save_channel(channel: uobject)
 fend
 
 procedure remove_old_item(channel: uobject)
-    // 90日経過したアイテムは除去
-    limit = gettime(-90, , G_OFFSET_DAYS)
+    // 30日経過したアイテムは除去
+    limit = gettime(-30, , G_OFFSET_DAYS)
     items = Filter(channel.items).by(|item => item.pubsec > limit|)
     channel.items = items
 fend
@@ -65,6 +64,8 @@ function check_for_update(scrapers, channel: uobject)
                 else
                     log("<#title> が更新されました")
                     // print_now(item)
+                    print item
+                    print channel
                     channel.items += item
                     result += 1
                 endif
