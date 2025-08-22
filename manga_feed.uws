@@ -64,8 +64,6 @@ function check_for_update(scrapers, channel: uobject)
                 else
                     log("<#title> が更新されました")
                     // print_now(item)
-                    print item
-                    print channel
                     channel.items += item
                     result += 1
                 endif
@@ -134,7 +132,8 @@ class Filter
         this.arr = arr
     fend
     function by(fn: func)
-        result = []
+        // https://github.com/stuncloud/UWSCR/issues/275 対策
+        result = @[]@
         for item in arr
             if fn(item) then
                 result += item
