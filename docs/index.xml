@@ -4,7 +4,7 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sat, 23 Aug 2025 02:10:38 +0900</pubDate>
+    <pubDate>Fri, 29 Aug 2025 01:00:12 +0900</pubDate>
     <item>
       <title>#237 どうしても欲しいもの (神引きのモナーク（仮）)</title>
       <link>https://www.pixiv.net/artworks/134181732</link>
@@ -16,6 +16,12 @@
       <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/008_1/</link>
       <description><![CDATA[公開日: 2025年8月22日]]></description>
       <pubDate>Fri, 22 Aug 2025 12:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>「俺、勇者じゃないですから。」第46話＜後編＞</title>
+      <link>https://bunshun.jp/articles/-/81083</link>
+      <description><![CDATA[「あなたが作ったゲームですよ？」アイテムドロップ率0.2％のアクセサリーのために周回周回！]]></description>
+      <pubDate>Fri, 22 Aug 2025 06:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
