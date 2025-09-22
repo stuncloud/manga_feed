@@ -125,25 +125,9 @@ class PubDate
     fend
 
     function to_string()
-        dt_str = format(this.dt_sec, '%a, %d %h %Y %T %z')
-        result = this.replace_day_month(dt_str)
+        result = format(this.dt_sec, '%a, %d %h %Y %T %z', FALSE, 'en_US')
     fend
 
-    dim replace_day_month = function(dt_str: string)
-        for month in [[' 1月', 'Jan'], [' 2月', 'Feb'], [' 3月', 'Mar'], [' 4月', 'Apr'], [' 5月', 'May'], [' 6月', 'Jun'], [' 7月', 'Jul'], [' 8月', 'Aug'], [' 9月', 'Sep'], ['10月', 'Oct'], ['11月', 'Nov'], ['12月', 'Dec']]
-            if pos(month[0], dt_str) > 0 then
-                dt_str = replace(dt_str, month[0], month[1])
-                break
-            endif
-        next
-        for day in [['日', 'Sun'], ['月', 'Mon'], ['火', 'Tue'], ['水', 'Wed'], ['木', 'Thu'], ['金', 'Fri'], ['土', 'Sat']]
-            if pos(day[0], dt_str) > 0 then
-                dt_str = replace(dt_str, day[0], day[1])
-                break
-            endif
-        next
-        result = dt_str
-    fend
 endclass
 
 function get_feed_object(title, link, description, pub_dt_sec: number = 0)
