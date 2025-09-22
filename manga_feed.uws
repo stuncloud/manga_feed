@@ -47,28 +47,28 @@ procedure remove_old_item(channel: uobject)
 fend
 
 function check_for_update(scrapers, channel: uobject)
-    gettime()
     result = 0
     for scraper in scrapers.as_array()
         title = scraper.title()
-        if scraper.check(G_TIME_WW, G_TIME_HH) then
-            // print_now("checking <#title>")
+        if scraper.check() then
+            print_now("checking <#title>")
             if item := scraper.scrape() then
+                next_check = scraper.get_check_fmt()
                 if type_of(item) == TYPE_ARRAY and length(item) > 0 then
-                    log("<#title> が更新されました")
+                    log("<#title> が更新されました、次回は<#next_check>以降に更新確認を行います")
                     // print_now(item)
                     for _item in item
                         channel.items += _item
                         result += 1
                     next
                 else
-                    log("<#title> が更新されました")
+                    log("<#title> が更新されました、次回は<#next_check>以降に更新確認を行います")
                     // print_now(item)
                     channel.items += item
                     result += 1
                 endif
             else
-                log("更新なし: <#title>")
+                log("更新なし: <#title>、次回は<#next_check>以降に更新確認を行います")
             endif
         endif
     next
@@ -90,11 +90,11 @@ procedure gen_rss_and_push2(cnt)
     endif
 fend
 
-// function print_now(msg)
-//     now = format(gettime(), '%F %T')
-//     result = "<#now>: <#msg>"
-//     print result
-// fend
+function print_now(msg)
+    now = format(gettime(), '%F %T')
+    result = "<#now>: <#msg>"
+    print result
+fend
 
 procedure push_to_github(xml, cnt)
     // print_now("push処理開始")

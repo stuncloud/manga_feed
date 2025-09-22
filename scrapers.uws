@@ -52,7 +52,7 @@ function get_scrapers()
             "神引きのモナーク（仮）",
             'https://www.pixiv.net/user/1504297/series/198227',
             ScrapePixiv,
-            WeekDay.Any, AM
+            WeekDay.Every3Days, AM
         ),
         // Scraper(
         //     "ニセモノの錬金術師",
@@ -393,6 +393,18 @@ module FeedScraperHelper
         writeini(section, key, value, ini)
     fend
 
+    const section_next_dt = 'next'
+
+    function get_next_dt(key)
+        next_check = readini(section_next_dt, key, ini)
+        result = val(next_check, 0)
+    fend
+
+    procedure set_next_dt(key, value)
+        writeini(section_next_dt, key, value, ini)
+    fend
+
+
     // procedure error(msg)
     //     fid = fopen(ERROR_LOG, F_WRITE8 or F_AUTOCLOSE)
     //     fput(fid, msg)
@@ -420,31 +432,95 @@ class Scraper
         this.time = time
     fend
 
-    // 午前・午後と曜日が合ってるかどうか
-    function check(d, h)
-        // result = int(time) == int(h)
-        if time == AM andl h < 12 then
-            result = TRUE
-        elseif time == PM andl 12 <= h then
-            result = TRUE
-        else
-            result = FALSE
-        endif
-        if this.day == WeekDay.Any then
-            exit
-        endif
-        d = convert_weekday[d]
-        result = ((this.day andb d) == d) and result
+    // 次回確認日時以降かどうかを確認
+    function check()
+        last = this.get_check_dt()
+        now = gettime()
+        result = last < now
     fend
 
     // スクレイピング用関数はUObject、またはEMPTYを返す
     function scrape(ignore_udpate_check = FALSE)
         result = fn(this.title, this.url, ignore_udpate_check)
+        this.update_next_check_dt()
     fend
 
     function title()
         result = this.title
     fend
+    // 次回チェック日時を得る
+    function get_check_dt()
+        result = FeedScraperHelper.get_next_dt(this.title)
+    fend
+    // フォーマットされた次回チェック日時を得る
+    function get_check_fmt()
+        n = this.get_check_dt()
+        result = format(n, '%x(%a)の%p')
+    fend
+    // 次回チェック日時を得る
+    procedure update_next_check_dt()
+        dim format_to_date_string = '%F'
+        last = this.get_check_dt()
+        if last > 0 then
+            // 前回から七日進める
+            date = format(last, format_to_date_string)
+            shift = this.get_shift_date()
+            next_check = gettime(shift, date, G_OFFSET_DAYS)
+            FeedScraperHelper.set_next_dt(this.title, next_check)
+        else
+            // 次の該当曜日を得る
+            today = format(gettime(), format_to_date_string)
+            dim days
+            select this.day
+                case WeekDay.Any, WeekDay.EveryDay
+                    days = 1
+                case WeekDay.Every2Days
+                    days = 2
+                case WeekDay.Every3Days
+                    days = 3
+                case WeekDay.Every4Days
+                    days = 4
+                case WeekDay.Every5Days
+                    days = 5
+                case WeekDay.Every6Days
+                    days = 6
+                case WeekDay.Every7Days
+                    days = 7
+                default
+                    gtww = weekday_to_g_time_ww[this.day]
+                    days = gtww - G_TIME_WW
+                    if days < 0 then
+                        days += 7
+                    endif
+            selend
+            next_check = gettime(days, today, G_OFFSET_DAYS)
+            if this.time == PM then
+                next_check = gettime(12, format(next_check, format_to_date_string), G_OFFSET_HOURS)
+            endif
+            FeedScraperHelper.set_next_dt(this.title, next_check)
+        endif
+    fend
+    function get_shift_date()
+        select this.day
+            case WeekDay.Any, WeekDay.EveryDay
+                result = 1
+            case WeekDay.Every2Days
+                result = 2
+            case WeekDay.Every3Days
+                result = 3
+            case WeekDay.Every4Days
+                result = 4
+            case WeekDay.Every5Days
+                result = 5
+            case WeekDay.Every6Days
+                result = 6
+            case WeekDay.Every7Days
+                result = 7
+            default
+                result = 7
+        selend
+    fend
+
 endclass
 
 enum WeekDay
@@ -456,6 +532,13 @@ enum WeekDay
     Sat = 32
     Sun = 64
     Any = 127
+    EveryDay   = $100 // 毎日
+    Every2Days = $200 // 2日毎
+    Every3Days = $300 // 3日毎
+    Every4Days = $400 // 4日毎
+    Every5Days = $500 // 5日毎
+    Every6Days = $600 // 6日毎
+    Every7Days = $700 // 7日毎
 endenum
 hash public convert_weekday
     "<#G_WEEKDAY_MON>" = WeekDay.Mon
@@ -466,6 +549,16 @@ hash public convert_weekday
     "<#G_WEEKDAY_SAT>" = WeekDay.Sat
     "<#G_WEEKDAY_SUN>" = WeekDay.Sun
 endhash
+hash public weekday_to_g_time_ww
+    1  = G_WEEKDAY_MON
+    2  = G_WEEKDAY_TUE
+    4  = G_WEEKDAY_WED
+    8  = G_WEEKDAY_THU
+    16 = G_WEEKDAY_FRI
+    32 = G_WEEKDAY_SAT
+    64 = G_WEEKDAY_SUN
+endhash
+
 
 const AM = 0
 const PM = 1
