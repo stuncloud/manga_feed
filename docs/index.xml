@@ -4,7 +4,19 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 19 Sep 2025 12:15:13 +0900</pubDate>
+    <pubDate>Thu, 25 Sep 2025 01:00:09 +0900</pubDate>
+    <item>
+      <title>#240 竜王ドラグス② (神引きのモナーク（仮）)</title>
+      <link>https://www.pixiv.net/artworks/135424804</link>
+      <description><![CDATA[#240 竜王ドラグス② (神引きのモナーク（仮）)]]></description>
+      <pubDate>Thu, 25 Sep 2025 01:00:09 +0900</pubDate>
+    </item>
+    <item>
+      <title>#239 神モナの追加エピソード（前世） (神引きのモナーク（仮）)</title>
+      <link>https://www.pixiv.net/artworks/135404810</link>
+      <description><![CDATA[#239 神モナの追加エピソード（前世） (神引きのモナーク（仮）)]]></description>
+      <pubDate>Thu, 25 Sep 2025 01:00:09 +0900</pubDate>
+    </item>
     <item>
       <title>第24話 (ブレイド＆バスタード)</title>
       <link>https://drecom-media.jp/viewer/e/612</link>
@@ -40,24 +52,6 @@
       <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/008_2/</link>
       <description><![CDATA[公開日: 2025年8月29日]]></description>
       <pubDate>Fri, 29 Aug 2025 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>#237 どうしても欲しいもの (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/134181732</link>
-      <description><![CDATA[#237 どうしても欲しいもの (神引きのモナーク（仮）)]]></description>
-      <pubDate>Sat, 23 Aug 2025 01:00:08 +0900</pubDate>
-    </item>
-    <item>
-      <title>第8話① (ウは宇宙ヤバイのウ！)</title>
-      <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/008_1/</link>
-      <description><![CDATA[公開日: 2025年8月22日]]></description>
-      <pubDate>Fri, 22 Aug 2025 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>「俺、勇者じゃないですから。」第46話＜後編＞</title>
-      <link>https://bunshun.jp/articles/-/81083</link>
-      <description><![CDATA[「あなたが作ったゲームですよ？」アイテムドロップ率0.2％のアクセサリーのために周回周回！]]></description>
-      <pubDate>Fri, 22 Aug 2025 06:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
