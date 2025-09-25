@@ -99,11 +99,12 @@ fend
 procedure push_to_github(xml, cnt)
     // print_now("push処理開始")
     sleep(1)
-    print doscmd("git add <#xml>")
+    print add := doscmd("git add <#xml>")
     sleep(1)
-    print doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
+    print commit := doscmd("git commit -m <#DBL><#cnt>件更新<#DBL>")
     sleep(1)
-    print doscmd("git push")
+    print push := doscmd("git push")
+    log_git(add, commit, push)
     // print_now("push処理終了")
 fend
 
@@ -123,6 +124,14 @@ procedure log(msg, error: bool = FALSE)
             fopen(log_file, F_APPEND, "<#now> [LOG] <#MSG>")
         endif
     endif
+fend
+procedure log_git(add, commit, push)
+    now = format(gettime(), '%F %T')
+    append = | log => fopen("git.log", F_APPEND, "<#log><#CR>") |
+    append(now)
+    append(add)
+    append(commit)
+    append(push)
 fend
 
 
