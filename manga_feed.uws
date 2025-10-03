@@ -68,6 +68,7 @@ function check_for_update(scrapers, channel: uobject)
                     result += 1
                 endif
             else
+                next_check = scraper.get_check_fmt()
                 log("更新なし: <#title>、次回は<#next_check>以降に更新確認を行います")
             endif
         endif
