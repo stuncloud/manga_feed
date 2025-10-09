@@ -4,12 +4,24 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sun, 05 Oct 2025 01:00:10 +0900</pubDate>
+    <pubDate>Fri, 10 Oct 2025 01:00:22 +0900</pubDate>
+    <item>
+      <title>第9話② (ウは宇宙ヤバイのウ！)</title>
+      <link>https://webcomicgamma.takeshobo.co.jp/_files/uchuuyabai/009_2/</link>
+      <description><![CDATA[公開日: 2025年10月 3日]]></description>
+      <pubDate>Fri, 10 Oct 2025 01:00:10 +0900</pubDate>
+    </item>
     <item>
       <title>#6 遊戯王デュエルオペレーションズ　第6話 (決闘手術)</title>
       <link>https://www.pixiv.net/artworks/135858833</link>
       <description><![CDATA[#6 遊戯王デュエルオペレーションズ　第6話 (決闘手術)]]></description>
       <pubDate>Sun, 05 Oct 2025 01:00:10 +0900</pubDate>
+    </item>
+    <item>
+      <title>第25話 (ブレイド＆バスタード)</title>
+      <link>https://drecom-media.jp/viewer/e/633</link>
+      <description><![CDATA[公開終了：2025年10月17日 12時00分]]></description>
+      <pubDate>Fri, 03 Oct 2025 12:00:00 +0900</pubDate>
     </item>
     <item>
       <title>#241 竜王ドラグス③ (神引きのモナーク（仮）)</title>
@@ -58,24 +70,6 @@
       <link>https://bunshun.jp/articles/-/82083</link>
       <description><![CDATA[「嗅ぐと頭痛がします」ニンニクソードを装備したら仲間から総スカン！？]]></description>
       <pubDate>Fri, 12 Sep 2025 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>#238 竜王ドラグス (神引きのモナーク（仮）)</title>
-      <link>https://www.pixiv.net/artworks/134802527</link>
-      <description><![CDATA[#238 竜王ドラグス (神引きのモナーク（仮）)]]></description>
-      <pubDate>Mon, 08 Sep 2025 01:00:06 +0900</pubDate>
-    </item>
-    <item>
-      <title>102話-2 (無能なナナ)</title>
-      <link>https://www.ganganonline.com/title/72/chapter/99873</link>
-      <description><![CDATA[脱獄計画]]></description>
-      <pubDate>Sat, 06 Sep 2025 08:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第23話 (ブレイド＆バスタード)</title>
-      <link>https://drecom-media.jp/viewer/e/591</link>
-      <description><![CDATA[公開終了：2025年9月19日 12時00分]]></description>
-      <pubDate>Fri, 05 Sep 2025 12:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
