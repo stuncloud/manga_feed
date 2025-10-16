@@ -4,7 +4,14 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Mon, 13 Oct 2025 01:00:09 +0900</pubDate>
+    <pubDate>Fri, 17 Oct 2025 01:00:19 +0900</pubDate>
+    <item>
+      <title>[解析エラー] 鍋に弾丸を受けながら</title>
+      <link>https://comic-walker.com/detail/KC_003969_S?episodeType=latest</link>
+      <description><![CDATA[scrapers.uws 252行目: link = root.querySelector('ul li a')
+[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
+      <pubDate>Fri, 17 Oct 2025 01:00:17 +0900</pubDate>
+    </item>
     <item>
       <title>#243 竜王ドラグス⑤ (神引きのモナーク（仮）)</title>
       <link>https://www.pixiv.net/artworks/136121247</link>
@@ -16,6 +23,12 @@
       <link>https://www.ganganonline.com/title/72/chapter/102324</link>
       <description><![CDATA[説得PART1]]></description>
       <pubDate>Sat, 11 Oct 2025 08:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>「俺、勇者じゃないですから。」第48話＜前編＞</title>
+      <link>https://bunshun.jp/articles/-/82698</link>
+      <description><![CDATA[「もっと私を信じて動いて！」初の5層クリア、ついにボス戦に挑むセラと愉快な仲間たち！]]></description>
+      <pubDate>Fri, 10 Oct 2025 06:00:00 +0900</pubDate>
     </item>
     <item>
       <title>第9話② (ウは宇宙ヤバイのウ！)</title>
