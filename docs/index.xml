@@ -4,7 +4,14 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 17 Oct 2025 01:00:19 +0900</pubDate>
+    <pubDate>Sat, 18 Oct 2025 01:00:12 +0900</pubDate>
+    <item>
+      <title>[解析エラー] ネタバレが激しすぎるRPG</title>
+      <link>https://webcomicgamma.takeshobo.co.jp/manga/netabare_rpg/</link>
+      <description><![CDATA[scrapers.uws 320行目: if ignore_update_check or FeedScraperHelper.check(key, link.id) then
+[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
+      <pubDate>Sat, 18 Oct 2025 01:00:07 +0900</pubDate>
+    </item>
     <item>
       <title>[解析エラー] 鍋に弾丸を受けながら</title>
       <link>https://comic-walker.com/detail/KC_003969_S?episodeType=latest</link>
