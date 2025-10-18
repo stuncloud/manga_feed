@@ -1,24 +1,6 @@
 function get_scrapers()
     items = [
         Scraper(
-            "スターウォーク",
-            'https://webcomicgamma.takeshobo.co.jp/manga/starwalk/',
-            ScrapeComicGamma,
-            WeekDay.Fri, PM
-        ),
-        Scraper(
-            "ウは宇宙ヤバイのウ！",
-            'https://webcomicgamma.takeshobo.co.jp/manga/uchuuyabai/',
-            ScrapeComicGamma,
-            WeekDay.Fri, PM
-        ),
-        Scraper(
-            "ネタバレが激しすぎるRPG",
-            'https://webcomicgamma.takeshobo.co.jp/manga/netabare_rpg/',
-            ScrapeComicGamma,
-            WeekDay.Fri, PM
-        ),
-        Scraper(
             "児玉まりあ文学集成",
             'https://to-ti.in/product/mariakodama',
             ScrapeToti,
@@ -37,16 +19,10 @@ function get_scrapers()
             WeekDay.Fri, PM
         ),
         Scraper(
-            "鍋に弾丸を受けながら",
-            'https://comic-walker.com/detail/KC_003969_S?episodeType=latest',
-            ScrapeKadoComi,
-            WeekDay.Fri, AM
-        ),
-        Scraper(
             "俺、勇者じゃないですから。",
             'https://bunshun.jp/list/author/60e7c5b077656106fe030000',
             ScrapeBunshun,
-            WeekDay.Fri, AM
+            WeekDay.Fri, PM
         ),
         Scraper(
             "神引きのモナーク（仮）",
