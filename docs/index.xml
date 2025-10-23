@@ -4,7 +4,7 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Wed, 22 Oct 2025 01:00:08 +0900</pubDate>
+    <pubDate>Fri, 24 Oct 2025 01:00:09 +0900</pubDate>
     <item>
       <title>#244 竜王ドラグス⑥ (神引きのモナーク（仮）)</title>
       <link>https://www.pixiv.net/artworks/136549932</link>
@@ -17,6 +17,12 @@
       <description><![CDATA[scrapers.uws 320行目: if ignore_update_check or FeedScraperHelper.check(key, link.id) then
 [ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
       <pubDate>Sat, 18 Oct 2025 01:00:07 +0900</pubDate>
+    </item>
+    <item>
+      <title>第26話 (ブレイド＆バスタード)</title>
+      <link>https://drecom-media.jp/viewer/e/655</link>
+      <description><![CDATA[公開終了：2025年11月7日 12時00分]]></description>
+      <pubDate>Fri, 17 Oct 2025 12:00:00 +0900</pubDate>
     </item>
     <item>
       <title>[解析エラー] 鍋に弾丸を受けながら</title>
