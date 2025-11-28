@@ -415,21 +415,24 @@ class Scraper
     // フォーマットされた次回チェック日時を得る
     function get_check_fmt()
         n = this.get_check_dt()
-        result = format(n, '%x(%a)の%p')
+        if n > 0 then
+            result = format(n, '%x(%a)の%p')
+        else
+            result = '日時が不明です'
+        endif
     fend
     // 次回チェック日時を得る
     procedure update_next_check_dt()
-        dim format_to_date_string = '%F'
         last = this.get_check_dt()
         if last > 0 then
-            // 前回から七日進める
-            date = format(last, format_to_date_string)
+            // 次の日時を得る
+            date = format(last, '%F %T')
             shift = this.get_shift_date()
             next_check = gettime(shift, date, G_OFFSET_DAYS)
             FeedScraperHelper.set_next_dt(this.title, next_check)
         else
             // 次の該当曜日を得る
-            today = format(gettime(), format_to_date_string)
+            today = format(gettime(), '%F')
             dim days
             select this.day
                 case WeekDay.Any, WeekDay.EveryDay
