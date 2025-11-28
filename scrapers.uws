@@ -10,7 +10,7 @@ function get_scrapers()
             "無能なナナ",
             'https://www.ganganonline.com/title/72',
             ScrapeGanGanOnline,
-            WeekDay.Sat, AM
+            WeekDay.Sat, PM
         ),
         Scraper(
             "ブレイド＆バスタード",
@@ -455,7 +455,8 @@ class Scraper
             selend
             next_check = gettime(days, today, G_OFFSET_DAYS)
             if this.time == PM then
-                next_check = gettime(12, format(next_check, format_to_date_string), G_OFFSET_HOURS)
+                // 12時間進める
+                next_check += 60 * 60 * 12
             endif
             FeedScraperHelper.set_next_dt(this.title, next_check)
         endif
