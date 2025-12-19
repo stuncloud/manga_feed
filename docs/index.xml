@@ -4,7 +4,13 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 12 Dec 2025 12:15:10 +0900</pubDate>
+    <pubDate>Fri, 19 Dec 2025 12:15:13 +0900</pubDate>
+    <item>
+      <title>第30話 (ブレイド＆バスタード)</title>
+      <link>https://drecom-media.jp/viewer/e/748</link>
+      <description><![CDATA[公開終了：2026年1月16日 12時00分]]></description>
+      <pubDate>Fri, 19 Dec 2025 12:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>「俺、勇者じゃないですから。」第50話＜前編＞</title>
       <link>https://bunshun.jp/articles/-/84382</link>
@@ -124,12 +130,6 @@
       <link>https://to-ti.in/story/kodama30</link>
       <description><![CDATA['25/11/20 UPDATE]]></description>
       <pubDate>Thu, 20 Nov 2025 00:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>「俺、勇者じゃないですから。」第49話＜前編＞</title>
-      <link>https://bunshun.jp/articles/-/82700</link>
-      <description><![CDATA[「2分で5回ポーション使ったら強制帰還」かなり無謀なチャレンジに挑む我らのお嬢様の運命は]]></description>
-      <pubDate>Fri, 14 Nov 2025 06:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
