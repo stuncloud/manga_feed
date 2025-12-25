@@ -54,6 +54,12 @@ function get_scrapers()
             ScrapePixiv,
             WeekDay.Sun, AM
         ),
+        Scraper(
+            "呪ロ",
+            'https://www.corocoro.jp/title/1078',
+            ScrapeCorocoro,
+            WeekDay.Fri, PM
+        ),
         // Scraper(
         //     "dummy", "",
         //     |key, url, check=>get_feed_object('subtitle', 'link', 'summary', 0.0)|,
@@ -157,6 +163,26 @@ function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
     selend
 fend
 
+function ScrapeCorocoro(key: string, url: string, ignore_update_check: bool = FALSE)
+    result = EMPTY
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        button = tab.document.querySelector('li button')
+        comment_link = button.querySelector('a').href
+        id = split(comment_link, '/', TRUE, TRUE)[0]
+        link = "https://www.corocoro.jp/chapter/<#id>/viewer"
+        if ignore_update_check or FeedScraperHelper.check(key, link) then
+            subtitle = trim( button.querySelector('div:not(.relative) p.truncate').textContent )
+            time = trim( button.querySelector('time').textContent )
+            summary = time
+            pub_sec = convert_date_to_sec(time, 0)
+            result = get_feed_object(subtitle, link, summary, pub_sec)
+            FeedScraperHelper.update(key, link)
+        endif
+    except
+        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+    endtry
+fend
 
 function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE, page = 1)
     result = EMPTY
