@@ -4,12 +4,18 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 16 Jan 2026 12:15:11 +0900</pubDate>
+    <pubDate>Thu, 22 Jan 2026 12:15:08 +0900</pubDate>
     <item>
       <title>第31話 (ブレイド＆バスタード)</title>
       <link>https://drecom-media.jp/viewer/e/775</link>
       <description><![CDATA[公開終了：2026年2月6日 12時00分]]></description>
       <pubDate>Fri, 16 Jan 2026 12:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>第3話</title>
+      <link>https://www.corocoro.jp/chapter/48355/viewer</link>
+      <description><![CDATA[2026/01/16]]></description>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 +0900</pubDate>
     </item>
     <item>
       <title>106話-2 (無能なナナ)</title>
@@ -40,12 +46,6 @@
       <link>https://bunshun.jp/articles/-/84383</link>
       <description><![CDATA[酔った奴らが私をどんな扱いしてきたかを思い出すと腹がたつ。なので「素手で殴る！」]]></description>
       <pubDate>Fri, 26 Dec 2025 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第30話 (ブレイド＆バスタード)</title>
-      <link>https://drecom-media.jp/viewer/e/748</link>
-      <description><![CDATA[公開終了：2026年1月16日 12時00分]]></description>
-      <pubDate>Fri, 19 Dec 2025 12:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
