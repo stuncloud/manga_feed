@@ -4,7 +4,13 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sat, 07 Feb 2026 12:15:09 +0900</pubDate>
+    <pubDate>Fri, 13 Feb 2026 12:15:10 +0900</pubDate>
+    <item>
+      <title>「俺、勇者じゃないですから。」第51話＜前編＞</title>
+      <link>https://bunshun.jp/articles/-/86032</link>
+      <description><![CDATA[「クソ客に嫌な思いさせられてた」なので男型のモンスターにはわりと強いのだ！]]></description>
+      <pubDate>Fri, 13 Feb 2026 06:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>107話-3 (無能なナナ)</title>
       <link>https://www.ganganonline.com/title/72/chapter/112233</link>
@@ -40,12 +46,6 @@
       <link>https://www.corocoro.jp/chapter/48355/viewer</link>
       <description><![CDATA[2026/01/16]]></description>
       <pubDate>Fri, 16 Jan 2026 00:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>106話-2 (無能なナナ)</title>
-      <link>https://www.ganganonline.com/title/72/chapter/110262</link>
-      <description><![CDATA[無能力者VS.無能力者PART1]]></description>
-      <pubDate>Sat, 10 Jan 2026 08:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
