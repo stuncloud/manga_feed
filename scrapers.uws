@@ -173,6 +173,7 @@ function ScrapeCorocoro(key: string, url: string, ignore_update_check: bool = FA
         link = "https://www.corocoro.jp/chapter/<#id>/viewer"
         if ignore_update_check or FeedScraperHelper.check(key, link) then
             subtitle = trim( button.querySelector('div:not(.relative) p.truncate').textContent )
+            subtitle += " (<#key>)"
             time = trim( button.querySelector('time').textContent )
             summary = time
             pub_sec = convert_date_to_sec(time, 0)
