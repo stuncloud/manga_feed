@@ -4,13 +4,19 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sat, 21 Mar 2026 00:26:11 +0900</pubDate>
+    <pubDate>Thu, 26 Mar 2026 12:15:08 +0900</pubDate>
     <item>
       <title>[解析エラー] ブレイド＆バスタード</title>
       <link>https://drecom-media.jp/drecomics/series/blade</link>
       <description><![CDATA[scrapers.uws 280行目: summary = trim( spans[1].textContent )
 [ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
       <pubDate>Sat, 21 Mar 2026 00:26:06 +0900</pubDate>
+    </item>
+    <item>
+      <title>第5話 (呪ロ)</title>
+      <link>https://www.corocoro.jp/chapter/49240/viewer</link>
+      <description><![CDATA[2026/03/20]]></description>
+      <pubDate>Fri, 20 Mar 2026 00:00:00 +0900</pubDate>
     </item>
     <item>
       <title>108話-3 (無能なナナ)</title>
@@ -47,18 +53,6 @@
       <link>https://bunshun.jp/articles/-/86033</link>
       <description><![CDATA[「なんてない一振りで相手の芯を捉える」師匠（俺・勇者）の見えてる世界がちょっとだけ見えた！]]></description>
       <pubDate>Fri, 27 Feb 2026 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第33話 (ブレイド＆バスタード)</title>
-      <link>https://drecom-media.jp/viewer/e/824</link>
-      <description><![CDATA[公開終了：2026年3月6日 12時00分]]></description>
-      <pubDate>Fri, 20 Feb 2026 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第4話</title>
-      <link>https://www.corocoro.jp/chapter/49198/viewer</link>
-      <description><![CDATA[2026/02/20]]></description>
-      <pubDate>Fri, 20 Feb 2026 00:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
