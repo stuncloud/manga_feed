@@ -276,9 +276,9 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
         if ignore_update_check or FeedScraperHelper.check(key, link) then
             subtitle = trim(div.querySelector('.ebookListItem_title').textContent)
             subtitle = "<#subtitle> (<#key>)"
-            spans = div.querySelectorAll('.ebookListItem_publishDate span')
-            summary = trim( spans[1].textContent )
-            pub_sec = convert_date_to_sec(trim( spans[0].textContent ), 12)
+            span = div.querySelector('.ebookListItem_publishDate span')
+            summary = trim( span.textContent )
+            pub_sec = convert_date_to_sec(summary, 12)
             result = get_feed_object(subtitle, link, summary, pub_sec)
             FeedScraperHelper.update(key, link)
         endif
