@@ -4,7 +4,14 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sun, 19 Apr 2026 01:00:12 +0900</pubDate>
+    <pubDate>Thu, 23 Apr 2026 12:15:10 +0900</pubDate>
+    <item>
+      <title>[解析エラー] 呪ロ</title>
+      <link>https://www.corocoro.jp/title/1078</link>
+      <description><![CDATA[scrapers.uws 171行目: comment_link = button.querySelector('a').href
+[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
+      <pubDate>Thu, 23 Apr 2026 12:15:10 +0900</pubDate>
+    </item>
     <item>
       <title>[解析エラー] 児玉まりあ文学集成</title>
       <link>https://to-ti.in/product/mariakodama</link>
@@ -54,13 +61,6 @@
       <link>https://bunshun.jp/articles/-/86885</link>
       <description><![CDATA[「俺の一張羅があああ～！！」装備をランダムで破壊するトンデモ武器でセラの服も爆ぜる！？]]></description>
       <pubDate>Fri, 27 Mar 2026 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] ブレイド＆バスタード</title>
-      <link>https://drecom-media.jp/drecomics/series/blade</link>
-      <description><![CDATA[scrapers.uws 280行目: summary = trim( spans[1].textContent )
-[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
-      <pubDate>Sat, 21 Mar 2026 00:26:06 +0900</pubDate>
     </item>
   </channel>
 </rss>
