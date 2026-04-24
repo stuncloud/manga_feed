@@ -408,10 +408,10 @@ module FeedScraperHelper
     fend
     function wait_for_first_elements(tab, selector: string, timeout = 30)
         limit = gettime() + timeout
-        elements = []
+        elements = EMPTY
         repeat
-            elements = tab.document.querySelector(selector)
-            if length(elements) > 0 then
+            elements = tab.document.querySelectorAll(selector)
+            if elements != EMPTY then
                 break
             else
                 sleep(1)
@@ -457,7 +457,9 @@ class Scraper
     // スクレイピング用関数はUObject、またはEMPTYを返す
     function scrape(ignore_udpate_check = FALSE)
         result = fn(this.title, this.url, ignore_udpate_check)
-        this.update_next_check_dt()
+        if ! ignore_udpate_check then
+            this.update_next_check_dt()
+        endif
     fend
 
     function title()
