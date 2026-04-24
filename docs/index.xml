@@ -4,7 +4,13 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 24 Apr 2026 23:50:49 +0900</pubDate>
+    <pubDate>Sat, 25 Apr 2026 04:03:55 +0900</pubDate>
+    <item>
+      <title>110話-1 (無能なナナ)</title>
+      <link>https://www.ganganonline.com/title/72/chapter/119823</link>
+      <description><![CDATA[準備万端]]></description>
+      <pubDate>Sat, 25 Apr 2026 08:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>[解析エラー] 決闘手術</title>
       <link>https://www.pixiv.net/user/63740794/series/132782</link>
@@ -101,18 +107,6 @@
       <link>https://bunshun.jp/articles/-/86885</link>
       <description><![CDATA[「俺の一張羅があああ～！！」装備をランダムで破壊するトンデモ武器でセラの服も爆ぜる！？]]></description>
       <pubDate>Fri, 27 Mar 2026 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第35話 (ブレイド＆バスタード)</title>
-      <link>https://drecom-media.jp/viewer/e/867</link>
-      <description><![CDATA[公開：2026年3月20日]]></description>
-      <pubDate>Fri, 20 Mar 2026 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>31.小説の書き方 (児玉まりあ文学集成)</title>
-      <link>https://to-ti.in/story/kodama31</link>
-      <description><![CDATA['26/02/19 UPDATE]]></description>
-      <pubDate>Thu, 19 Feb 2026 00:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
