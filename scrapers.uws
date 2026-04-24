@@ -167,7 +167,7 @@ function ScrapeCorocoro(key: string, url: string, ignore_update_check: bool = FA
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        button = tab.document.querySelector('li button')
+        button = FeedScraperHelper.wait_for_first_element(tab, 'li button')
         comment_link = button.querySelector('a').href
         id = split(comment_link, '/', TRUE, TRUE)[0]
         link = "https://www.corocoro.jp/chapter/<#id>/viewer"
@@ -183,6 +183,7 @@ function ScrapeCorocoro(key: string, url: string, ignore_update_check: bool = FA
     except
         result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
+    tab.close()
 fend
 
 function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE, page = 1)
@@ -190,7 +191,7 @@ function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE
     tab = FeedScraperHelper.browser.new(url)
     try
         result = []
-        links = tab.document.querySelectorAll('main ul li a:nth-last-child(1)')
+        links = FeedScraperHelper.wait_for_first_elements(tab, 'main ul li a:nth-last-child(1)')
         first_link = EMPTY
         for link, i in links
             if FeedScraperHelper.check(key, link.href) then
@@ -232,7 +233,7 @@ function ScrapeBunshun(key: string, url: string, ignore_update_check: bool = FAL
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        li = tab.document.querySelector('#page-content ul li')
+        li = FeedScraperHelper.wait_for_first_element(tab, '#page-content ul li')
         link = li.querySelector('.title a')
         if ignore_update_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( li.querySelector('.subtitle').textContent )
@@ -251,7 +252,7 @@ function ScrapeKadoComi(key: string, url: string, ignore_update_check: bool = FA
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        root = tab.document.querySelector('.EpisodesTabContents_root__VrJZ1')
+        root = FeedScraperHelper.wait_for_first_element(tab, '.EpisodesTabContents_root__VrJZ1')
         link = root.querySelector('ul li a')
         if ignore_update_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( link.querySelector('.EpisodeThumbnail_title__G1eWj').textContent )
@@ -271,7 +272,7 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        div = tab.document.querySelector('.ebookListItem')
+        div = FeedScraperHelper.wait_for_first_element(tab, '.ebookListItem')
         link = div.querySelector('a').href
         if ignore_update_check or FeedScraperHelper.check(key, link) then
             subtitle = trim(div.querySelector('.ebookListItem_title').textContent)
@@ -292,7 +293,8 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_update_check: bool 
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        link = tab.document.querySelectorAll('.Chapter_chapter__oSTBF')[1]
+        links = FeedScraperHelper.wait_for_first_elements(tab, '.Chapter_chapter__oSTBF')
+        link = links[1]
         inner = link.querySelectorAll('.Chapter_chapter__body__Iopda p')
         episode = trim( inner[0].textContent )
         subtitle = "<#episode> (<#key>)"
@@ -319,7 +321,7 @@ function ScrapeComicGamma(key: string, url: string, ignore_update_check: bool = 
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        link = tab.document.querySelector('div.read__outer a')
+        link = FeedScraperHelper.wait_for_first_element(tab, 'div.read__outer a')
         if ignore_update_check or FeedScraperHelper.check(key, link.id) then
             subtitle = trim( link.querySelector('.episode').textContent )
             subtitle = "<#subtitle> (<#key>)"
@@ -340,7 +342,7 @@ function ScrapeToti(key: string, url: string, ignore_update_check: bool = FALSE)
 
     tab = FeedScraperHelper.browser.new(url)
     try
-        link = tab.document.querySelector('.next a')
+        link = FeedScraperHelper.wait_for_first_element(tab, '.next a')
         if ignore_update_check or FeedScraperHelper.check(key, link.href) then
             subtitle = trim( link.querySelector('span.typesquare_option').textContent )
             subtitle = "<#subtitle> (<#key>)"
@@ -391,6 +393,32 @@ module FeedScraperHelper
         writeini(section_next_dt, key, value, ini)
     fend
 
+    function wait_for_first_element(tab, selector: string, timeout = 30)
+        limit = gettime() + timeout
+        element = EMPTY
+        repeat
+            element = tab.document.querySelector(selector)
+            if element != EMPTY then
+                break
+            else
+                sleep(1)
+            endif
+        until limit < gettime()
+        result = element
+    fend
+    function wait_for_first_elements(tab, selector: string, timeout = 30)
+        limit = gettime() + timeout
+        elements = []
+        repeat
+            elements = tab.document.querySelector(selector)
+            if length(elements) > 0 then
+                break
+            else
+                sleep(1)
+            endif
+        until limit < gettime()
+        result = elements
+    fend
 
     // procedure error(msg)
     //     fid = fopen(ERROR_LOG, F_WRITE8 or F_AUTOCLOSE)
