@@ -4,7 +4,14 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Thu, 23 Apr 2026 12:15:10 +0900</pubDate>
+    <pubDate>Fri, 24 Apr 2026 12:15:09 +0900</pubDate>
+    <item>
+      <title>[解析エラー] 俺、勇者じゃないですから。</title>
+      <link>https://bunshun.jp/list/author/60e7c5b077656106fe030000</link>
+      <description><![CDATA[scrapers.uws 236行目: link = li.querySelector('.title a')
+[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
+      <pubDate>Fri, 24 Apr 2026 12:15:09 +0900</pubDate>
+    </item>
     <item>
       <title>[解析エラー] 呪ロ</title>
       <link>https://www.corocoro.jp/title/1078</link>
