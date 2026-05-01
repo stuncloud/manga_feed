@@ -357,8 +357,11 @@ function ScrapeToti(key: string, url: string, ignore_update_check: bool = FALSE)
     tab.close()
 fend
 
+// デフォルトではブラウザをヘッドレスで起動
+// なにか文字列渡していればヘッドレスではなくなる
+const HEADLESS = PARAM_STR[0] != EMPTY
+
 module FeedScraperHelper
-    const HEADLESS = FALSE
     const MANGA_FEED_PROFILE_DIR = "<#GET_CUR_DIR>\profile\"
     // const ERROR_LOG = 'D:\manga_feed\error.log'
     public browser
@@ -368,6 +371,10 @@ module FeedScraperHelper
             .headless(HEADLESS)_
             .profile(MANGA_FEED_PROFILE_DIR)_
             .start()
+    fend
+
+    procedure close()
+        this.browser.close()
     fend
 
     const ini = 'manga_feed.ini'

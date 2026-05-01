@@ -1,5 +1,5 @@
 
-call scrapers.uws
+call scrapers.uws(PARAM_STR[0])
 
 const out_xml = ".\docs\index.xml"
 const channel_json = ".\channel.json"
@@ -13,6 +13,7 @@ if (cnt := check_for_update(scrapers, channel)) > 0 then
     gen_rss_and_push2(cnt)
 endif
 log(cnt)
+
 
 
 function load_channel()

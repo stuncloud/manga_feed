@@ -4,7 +4,14 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sat, 25 Apr 2026 04:03:55 +0900</pubDate>
+    <pubDate>Fri, 01 May 2026 12:16:00 +0900</pubDate>
+    <item>
+      <title>[解析エラー] ブレイド＆バスタード</title>
+      <link>https://drecom-media.jp/drecomics/series/blade</link>
+      <description><![CDATA[scrapers.uws 276行目: link = div.querySelector('a').href
+[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
+      <pubDate>Fri, 01 May 2026 12:15:40 +0900</pubDate>
+    </item>
     <item>
       <title>110話-1 (無能なナナ)</title>
       <link>https://www.ganganonline.com/title/72/chapter/119823</link>
@@ -88,25 +95,6 @@
       <link>https://www.ganganonline.com/title/72/chapter/117435</link>
       <description><![CDATA[救出]]></description>
       <pubDate>Sat, 04 Apr 2026 08:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>109話-1 (無能なナナ)</title>
-      <link>https://www.ganganonline.com/title/72/chapter/117438</link>
-      <description><![CDATA[救出]]></description>
-      <pubDate>Sat, 28 Mar 2026 08:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] ブレイド＆バスタード</title>
-      <link>https://drecom-media.jp/drecomics/series/blade</link>
-      <description><![CDATA[scrapers.uws 280行目: summary = trim( spans[1].textContent )
-[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
-      <pubDate>Fri, 27 Mar 2026 12:15:08 +0900</pubDate>
-    </item>
-    <item>
-      <title>「俺、勇者じゃないですから。」第52話＜後編＞</title>
-      <link>https://bunshun.jp/articles/-/86885</link>
-      <description><![CDATA[「俺の一張羅があああ～！！」装備をランダムで破壊するトンデモ武器でセラの服も爆ぜる！？]]></description>
-      <pubDate>Fri, 27 Mar 2026 06:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
