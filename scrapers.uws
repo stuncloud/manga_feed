@@ -272,13 +272,14 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
-        div = FeedScraperHelper.wait_for_first_element(tab, '.ebookListItem')
-        link = div.querySelector('a').href
+        btn = FeedScraperHelper.wait_for_first_element(tab, '#episodes-panel button')
+        imgsrc = btn.querySelector('img').src
+        path = betweenstr(imgsrc, 'contents/', '/thumbnails')
+        link = "https://drecomi-plus.jp/series/<#path>"
         if ignore_update_check or FeedScraperHelper.check(key, link) then
-            subtitle = trim(div.querySelector('.ebookListItem_title').textContent)
+            subtitle = trim( btn.querySelector('p').textContent)
             subtitle = "<#subtitle> (<#key>)"
-            span = div.querySelector('.ebookListItem_publishDate span')
-            summary = trim( span.textContent )
+            summary = trim( btn.querySelectorAll('div')[3].textContent )
             pub_sec = convert_date_to_sec(summary, 12)
             result = get_feed_object(subtitle, link, summary, pub_sec)
             FeedScraperHelper.update(key, link)
@@ -371,10 +372,6 @@ module FeedScraperHelper
             .headless(HEADLESS)_
             .profile(MANGA_FEED_PROFILE_DIR)_
             .start()
-    fend
-
-    procedure close()
-        this.browser.close()
     fend
 
     const ini = 'manga_feed.ini'
