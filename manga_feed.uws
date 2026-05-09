@@ -54,19 +54,28 @@ function check_for_update(scrapers, channel: uobject)
         if scraper.check() then
             print_now("checking <#title>")
             if item := scraper.scrape() then
-                next_check = scraper.get_check_fmt()
-                if type_of(item) == TYPE_ARRAY and length(item) > 0 then
-                    log("<#title> が更新されました、次回は<#next_check>以降に更新確認を行います")
-                    // print_now(item)
-                    for _item in item
-                        channel.items += _item
-                        result += 1
-                    next
+                if item.error then
+                    // エラーの場合はフィードではなくログに残す
+                    title = item.title
+                    link = item.link
+                    desc = item.description
+                    log("<#title>: <#desc> [<#link>]", TRUE)
+                    print item
                 else
-                    log("<#title> が更新されました、次回は<#next_check>以降に更新確認を行います")
-                    // print_now(item)
-                    channel.items += item
-                    result += 1
+                    next_check = scraper.get_check_fmt()
+                    if type_of(item) == TYPE_ARRAY and length(item) > 0 then
+                        log("<#title> が更新されました、次回は<#next_check>以降に更新確認を行います")
+                        // print_now(item)
+                        for _item in item
+                            channel.items += _item
+                            result += 1
+                        next
+                    else
+                        log("<#title> が更新されました、次回は<#next_check>以降に更新確認を行います")
+                        // print_now(item)
+                        channel.items += item
+                        result += 1
+                    endif
                 endif
             else
                 next_check = scraper.get_check_fmt()
