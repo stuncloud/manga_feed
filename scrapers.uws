@@ -14,7 +14,7 @@ function get_scrapers()
         ),
         Scraper(
             "ブレイド＆バスタード",
-            'https://drecom-media.jp/drecomics/series/blade',
+            'https://drecomi-plus.jp/series/CD00007/',
             ScrapeDrecom,
             WeekDay.Fri, PM
         ),
@@ -62,7 +62,7 @@ function get_scrapers()
         ),
         // Scraper(
         //     "dummy", "",
-        //     |key, url, check=>get_feed_object('subtitle', 'link', 'summary', 0.0)|,
+        //     |key, url, check=>new_feed_object('subtitle', 'link', 'summary', 0.0)|,
         //     WeekDay.Any, AM
         // )
     ]
@@ -112,20 +112,26 @@ class PubDate
 
 endclass
 
-function get_feed_object(title, link, description, pub_dt_sec: number = 0)
+function new_feed_object(title, link, description, pub_dt_sec: number = 0, error: bool = false)
     result = @{
         "title": null,
         "link": null,
         "pubDate": null,
         "pubSec": null,
-        "description": null
+        "description": null,
+        "error": false
     }@
     result.title = title
     result.link = link
-    result.description = description
     pd = PubDate(pub_dt_sec)
     result.pubDate = pd.to_string()
     result.pubSec = pd.get_sec()
+    result.description = description
+    result.error = error
+fend
+
+function new_error_object(title, link, description, pub_dt_sec: number = 0)
+    result = new_feed_object("[解析エラー] <#title>", link, description, pub_dt_sec, true)
 fend
 
 function convert_date_to_sec(date, offset = 0, offset_opt = G_OFFSET_HOURS)
@@ -177,11 +183,11 @@ function ScrapeCorocoro(key: string, url: string, ignore_update_check: bool = FA
             time = trim( button.querySelector('time').textContent )
             summary = time
             pub_sec = convert_date_to_sec(time, 0)
-            result = get_feed_object(subtitle, link, summary, pub_sec)
+            result = new_feed_object(subtitle, link, summary, pub_sec)
             FeedScraperHelper.update(key, link)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
@@ -203,7 +209,7 @@ function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE
                 subtitle = "<#subtitle> (<#key>)"
                 summary = trim( subtitle )
                 pub_sec = 0
-                result += get_feed_object(subtitle, link.href, summary, pub_sec)
+                result += new_feed_object(subtitle, link.href, summary, pub_sec)
             else
                 break
             endif
@@ -224,7 +230,7 @@ function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE
             FeedScraperHelper.update(key, first_link)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
@@ -239,11 +245,11 @@ function ScrapeBunshun(key: string, url: string, ignore_update_check: bool = FAL
             subtitle = trim( li.querySelector('.subtitle').textContent )
             summary = trim( link.textContent )
             pub_sec = convert_date_to_sec(li.querySelector('time').dateTime, 0)
-            result = get_feed_object(subtitle, link.href, summary, pub_sec)
+            result = new_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.href)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
@@ -259,11 +265,11 @@ function ScrapeKadoComi(key: string, url: string, ignore_update_check: bool = FA
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( root.querySelector('.EpisodesTabContents_nextUpdateDate__YDQiC').textContent )
             pub_sec = convert_date_to_sec(trim( link.querySelector('span').textContent ), 0)
-            result = get_feed_object(subtitle, link.href, summary, pub_sec)
+            result = new_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.href)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
@@ -273,7 +279,7 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
     tab = FeedScraperHelper.browser.new(url)
     try
         btn = FeedScraperHelper.wait_for_first_element(tab, '#episodes-panel button')
-        imgsrc = btn.querySelector('img').src
+        imgsrc = btn.querySelector('img333').src
         path = betweenstr(imgsrc, 'contents/', '/thumbnails')
         link = "https://drecomi-plus.jp/series/<#path>"
         if ignore_update_check or FeedScraperHelper.check(key, link) then
@@ -281,11 +287,11 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( btn.querySelectorAll('div')[3].textContent )
             pub_sec = convert_date_to_sec(summary, 12)
-            result = get_feed_object(subtitle, link, summary, pub_sec)
+            result = new_feed_object(subtitle, link, summary, pub_sec)
             FeedScraperHelper.update(key, link)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
@@ -309,11 +315,11 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_update_check: bool 
             // URL取得
             sleep(1)
             href = tab.document.location.href
-            result = get_feed_object(subtitle, href, summary, pub_sec)
+            result = new_feed_object(subtitle, href, summary, pub_sec)
             FeedScraperHelper.update(key, episode)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
@@ -329,11 +335,11 @@ function ScrapeComicGamma(key: string, url: string, ignore_update_check: bool = 
             updated = link.querySelector('.episode__text').textContent
             pub_sec = convert_date_to_sec(updated, 12)
             summary = '公開日: ' + updated
-            result = get_feed_object(subtitle, link.href, summary, pub_sec)
+            result = new_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.id)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
@@ -349,11 +355,11 @@ function ScrapeToti(key: string, url: string, ignore_update_check: bool = FALSE)
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( tab.document.querySelector('header time').textContent )
             pub_sec = convert_date_to_sec(summary)
-            result = get_feed_object(subtitle, link.href, summary, pub_sec)
+            result = new_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.href)
         endif
     except
-        result = get_feed_object("[解析エラー] <#key>", url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
     endtry
     tab.close()
 fend
