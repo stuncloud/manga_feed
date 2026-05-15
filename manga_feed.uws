@@ -119,10 +119,10 @@ procedure push_to_github(xml, cnt)
     // print_now("push処理終了")
 fend
 
-procedure log(msg, error: bool = FALSE)
+procedure log(msg, is_error: bool = FALSE)
     now = format(gettime(), '%F %T')
-    if error then
-        fopen(log_file, F_APPEND, "<#now> [ERR] <#error>")
+    if is_error then
+        fopen(log_file, F_APPEND, "<#now> [ERR] <#msg>")
     else
         if type_of(msg) = TYPE_NUMBER then
             cnt = msg
