@@ -187,7 +187,7 @@ function ScrapeCorocoro(key: string, url: string, ignore_update_check: bool = FA
             FeedScraperHelper.update(key, link)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
@@ -230,7 +230,7 @@ function ScrapePixiv(key: string, url: string, ignore_update_check: bool = FALSE
             FeedScraperHelper.update(key, first_link)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
@@ -249,7 +249,7 @@ function ScrapeBunshun(key: string, url: string, ignore_update_check: bool = FAL
             FeedScraperHelper.update(key, link.href)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
@@ -269,7 +269,7 @@ function ScrapeKadoComi(key: string, url: string, ignore_update_check: bool = FA
             FeedScraperHelper.update(key, link.href)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
@@ -279,7 +279,7 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
     tab = FeedScraperHelper.browser.new(url)
     try
         btn = FeedScraperHelper.wait_for_first_element(tab, '#episodes-panel button')
-        imgsrc = btn.querySelector('img333').src
+        imgsrc = btn.querySelector('img').src
         path = betweenstr(imgsrc, 'contents/', '/thumbnails')
         link = "https://drecomi-plus.jp/series/<#path>"
         if ignore_update_check or FeedScraperHelper.check(key, link) then
@@ -291,7 +291,7 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
             FeedScraperHelper.update(key, link)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
@@ -319,7 +319,7 @@ function ScrapeGanGanOnline(key: string, url: string, ignore_update_check: bool 
             FeedScraperHelper.update(key, episode)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
@@ -339,7 +339,7 @@ function ScrapeComicGamma(key: string, url: string, ignore_update_check: bool = 
             FeedScraperHelper.update(key, link.id)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
@@ -359,7 +359,7 @@ function ScrapeToti(key: string, url: string, ignore_update_check: bool = FALSE)
             FeedScraperHelper.update(key, link.href)
         endif
     except
-        result = new_error_object(key, url, "<#TRY_ERRLINE><#CR><#TRY_ERRMSG>")
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
     endtry
     tab.close()
 fend
