@@ -4,7 +4,13 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Sat, 23 May 2026 12:15:20 +0900</pubDate>
+    <pubDate>Sat, 06 Jun 2026 12:15:20 +0900</pubDate>
+    <item>
+      <title>111話-2 (無能なナナ)</title>
+      <link>https://www.ganganonline.com/title/72</link>
+      <description><![CDATA[決行]]></description>
+      <pubDate>Sat, 06 Jun 2026 08:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>111話-1 (無能なナナ)</title>
       <link>https://www.ganganonline.com/title/72</link>
@@ -41,60 +47,6 @@
       <link>https://bunshun.jp/articles/-/88146</link>
       <description><![CDATA[「騎士団はダンジョンに興味がないから」そんなとこで教えます。グレートティーチャーセラ＆シン！]]></description>
       <pubDate>Fri, 08 May 2026 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] ブレイド＆バスタード</title>
-      <link>https://drecom-media.jp/drecomics/series/blade</link>
-      <description><![CDATA[scrapers.uws 276行目: link = div.querySelector('a').href
-[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
-      <pubDate>Fri, 01 May 2026 12:15:40 +0900</pubDate>
-    </item>
-    <item>
-      <title>110話-1 (無能なナナ)</title>
-      <link>https://www.ganganonline.com/title/72/chapter/119823</link>
-      <description><![CDATA[準備万端]]></description>
-      <pubDate>Sat, 25 Apr 2026 08:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] 決闘手術</title>
-      <link>https://www.pixiv.net/user/63740794/series/132782</link>
-      <description><![CDATA[scrapers.uws 195行目: for link, i in links
-[Syntax Error] for-inには配列、連想配列、文字列、コレクションを渡してください]]></description>
-      <pubDate>Fri, 24 Apr 2026 23:50:46 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] 神引きのモナーク（仮）</title>
-      <link>https://www.pixiv.net/user/1504297/series/198227</link>
-      <description><![CDATA[scrapers.uws 195行目: for link, i in links
-[Syntax Error] for-inには配列、連想配列、文字列、コレクションを渡してください]]></description>
-      <pubDate>Fri, 24 Apr 2026 23:50:12 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] 無能なナナ</title>
-      <link>https://www.ganganonline.com/title/72</link>
-      <description><![CDATA[scrapers.uws 413行目: if length(elements) > 0 then
-[ビルトイン関数エラー(LENGTH)] 不正な引数 (RemoteObject(6029209431671514937.2.2))]]></description>
-      <pubDate>Fri, 24 Apr 2026 23:49:18 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] 俺、勇者じゃないですから。</title>
-      <link>https://bunshun.jp/list/author/60e7c5b077656106fe030000</link>
-      <description><![CDATA[scrapers.uws 236行目: link = li.querySelector('.title a')
-[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
-      <pubDate>Fri, 24 Apr 2026 12:15:09 +0900</pubDate>
-    </item>
-    <item>
-      <title>「俺、勇者じゃないですから。」第53話＜後編＞</title>
-      <link>https://bunshun.jp/articles/-/87627</link>
-      <description><![CDATA[「自分も仲間に入りたいなら…」神様だって勇者（俺）たちと一緒にダンジョンにいきたいのです！！]]></description>
-      <pubDate>Fri, 24 Apr 2026 06:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>[解析エラー] 呪ロ</title>
-      <link>https://www.corocoro.jp/title/1078</link>
-      <description><![CDATA[scrapers.uws 171行目: comment_link = button.querySelector('a').href
-[ドット呼び出しエラー] モジュールまたはオブジェクトではありません ()]]></description>
-      <pubDate>Thu, 23 Apr 2026 12:15:10 +0900</pubDate>
     </item>
   </channel>
 </rss>
