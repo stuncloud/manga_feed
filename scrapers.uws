@@ -278,8 +278,13 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
     result = EMPTY
     tab = FeedScraperHelper.browser.new(url)
     try
+        // マンガ表示部分を消す
+        section = FeedScraperHelper.wait_for_first_element(tab, 'main section')
+        section.remove()
         btn = FeedScraperHelper.wait_for_first_element(tab, '#episodes-panel button')
-        if (img := btn.querySelector('img')) == null then
+        if (img := btn.querySelector('img')) then
+            imgsrc = img.src
+        else
             btn.click()
             for i = 0 to 10
                 repeat
@@ -289,8 +294,6 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
             else
                 raise("imgのあるボタンが見つかりませんでした", "ScrapeDrecomタイムアウト")
             endfor
-        else
-            imgsrc = img.src
         endif
         path = betweenstr(imgsrc, 'contents/', '/thumbnails')
         link = "https://drecomi-plus.jp/series/<#path>"
@@ -298,6 +301,7 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
             subtitle = trim( btn.querySelector('p').textContent)
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( btn.querySelectorAll('div')[3].textContent )
+            summary += '/' + trim( tab.document.querySelector('#series-info-title').parentElement.querySelectorAll('p')[1].textContent )
             pub_sec = convert_date_to_sec(summary, 12)
             result = new_feed_object(subtitle, link, summary, pub_sec)
             FeedScraperHelper.update(key, link)
