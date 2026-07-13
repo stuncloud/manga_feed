@@ -279,7 +279,19 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
     tab = FeedScraperHelper.browser.new(url)
     try
         btn = FeedScraperHelper.wait_for_first_element(tab, '#episodes-panel button')
-        imgsrc = btn.querySelector('img').src
+        if (img =: btn.querySelector('img')) == null then
+            btn.click()
+            for i = 0 to 10
+                repeat
+                    sleep(0.3)
+                until img := tab.document.querySelector('#episodes-panel button img')
+                imgsrc = img.src
+            else
+                raise("imgのあるボタンが見つかりませんでした", "ScrapeDrecomタイムアウト")
+            endfor
+        else
+            imgsrc = img.src
+        endif
         path = betweenstr(imgsrc, 'contents/', '/thumbnails')
         link = "https://drecomi-plus.jp/series/<#path>"
         if ignore_update_check or FeedScraperHelper.check(key, link) then
