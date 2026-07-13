@@ -301,7 +301,11 @@ function ScrapeDrecom(key: string, url: string, ignore_update_check: bool = FALS
             subtitle = trim( btn.querySelector('p').textContent)
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( btn.querySelectorAll('div')[3].textContent )
-            summary += '/' + trim( tab.document.querySelector('#series-info-title').parentElement.querySelectorAll('p')[1].textContent )
+            try
+                // 可能であれば次回更新日もサマリに入れる
+                summary += '/' + trim( tab.document.querySelector('#series-info-title').parentElement.querySelectorAll('p')[1].textContent )
+            except
+            endtry
             pub_sec = convert_date_to_sec(summary, 12)
             result = new_feed_object(subtitle, link, summary, pub_sec)
             FeedScraperHelper.update(key, link)
