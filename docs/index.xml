@@ -4,7 +4,13 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 04 Sep 2026 12:15:10 +0900</pubDate>
+    <pubDate>Fri, 18 Sep 2026 12:15:11 +0900</pubDate>
+    <item>
+      <title>第46話 (ブレイド＆バスタード)</title>
+      <link>https://drecomi-plus.jp/series/CD00007/episodes/CD00007-010-081</link>
+      <description><![CDATA[公開：2026年9月18日（金）/次回更新予定：2026年10月2日(金)]]></description>
+      <pubDate>Fri, 18 Sep 2026 12:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>第45話 (ブレイド＆バスタード)</title>
       <link>https://drecomi-plus.jp/series/CD00007/episodes/CD00007-009-080</link>
@@ -16,24 +22,6 @@
       <link>https://drecomi-plus.jp/series/CD00007/episodes/CD00007-009-079</link>
       <description><![CDATA[公開：2026年8月21日（金）/次回更新予定：2026年9月4日(金)]]></description>
       <pubDate>Fri, 21 Aug 2026 12:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>33.妹の消滅・2 (児玉まりあ文学集成)</title>
-      <link>https://to-ti.in/story/kodama33</link>
-      <description><![CDATA['26/08/18 UPDATE]]></description>
-      <pubDate>Tue, 18 Aug 2026 00:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第10話 (呪ロ)</title>
-      <link>https://www.corocoro.jp/chapter/51639/viewer</link>
-      <description><![CDATA[2026/08/14]]></description>
-      <pubDate>Fri, 14 Aug 2026 00:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第43話 (ブレイド＆バスタード)</title>
-      <link>https://drecomi-plus.jp/series/CD00007/episodes/CD00007-009-078</link>
-      <description><![CDATA[公開：2026年8月7日（金）]]></description>
-      <pubDate>Fri, 07 Aug 2026 12:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
