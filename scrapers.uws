@@ -6,29 +6,29 @@ function get_scrapers()
             ScrapeToti,
             WeekDay.Sun, AM
         ),
-        Scraper(
-            "無能なナナ",
-            'https://www.ganganonline.com/title/72',
-            ScrapeGanGanOnline,
-            WeekDay.Sat, PM
-        ),
+        //Scraper(
+        //    "無能なナナ",
+        //    'https://www.ganganonline.com/title/72',
+        //    ScrapeGanGanOnline,
+        //    WeekDay.Sat, PM
+        //),
         Scraper(
             "ブレイド＆バスタード",
             'https://drecomi-plus.jp/series/CD00007/',
             ScrapeDrecom,
             WeekDay.Fri, PM
         ),
-        Scraper(
-            "俺、勇者じゃないですから。",
-            'https://bunshun.jp/list/author/60e7c5b077656106fe030000',
-            ScrapeBunshun,
-            WeekDay.Fri, PM
-        ),
+        //Scraper(
+        //    "俺、勇者じゃないですから。",
+        //    'https://bunshun.jp/list/author/60e7c5b077656106fe030000',
+        //    ScrapeBunshun,
+        //    WeekDay.Fri, PM
+        //),
         Scraper(
             "神引きのモナーク（仮）",
             'https://www.pixiv.net/user/1504297/series/198227',
             ScrapePixiv,
-            WeekDay.Every3Days, AM
+            WeekDay.Sun, AM
         ),
         // Scraper(
         //     "ニセモノの錬金術師",
@@ -59,6 +59,12 @@ function get_scrapers()
             'https://www.corocoro.jp/title/1078',
             ScrapeCorocoro,
             WeekDay.Fri, PM
+        ),
+        Scraper(
+            "糸と鎧",
+            'https://yanmaga.jp/comics/%E7%B3%B8%E3%81%A8%E9%8E%A7?sort=newer',
+            ScrapeYanmaga,
+            WeekDay.Tue, PM
         ),
         // Scraper(
         //     "dummy", "",
@@ -375,6 +381,28 @@ function ScrapeToti(key: string, url: string, ignore_update_check: bool = FALSE)
             subtitle = "<#subtitle> (<#key>)"
             summary = trim( tab.document.querySelector('header time').textContent )
             pub_sec = convert_date_to_sec(summary)
+            result = new_feed_object(subtitle, link.href, summary, pub_sec)
+            FeedScraperHelper.update(key, link.href)
+        endif
+    except
+        result = new_error_object(key, url, "<#TRY_ERRLINE> (<#TRY_ERRMSG>)")
+    endtry
+    tab.close()
+fend
+
+// ヤンマガWeb
+function ScrapeYanmaga(key: string, url: string, ignore_update_check: bool = FALSE)
+    result = EMPTY
+
+    tab = FeedScraperHelper.browser.new(url)
+    try
+        item = FeedScraperHelper.wait_for_first_element(tab, '.mod-episode-item')
+        if ignore_update_check or FeedScraperHelper.check(key, link.href) then
+            subtitle = trim( item.getAttribute('data-episode-title') )
+            summary = trim( item.querySelector('a time').textContent )
+            subtitle = "<#subtitle> (<#key>)"
+            pub_sec = convert_date_to_sec(summary)
+            link = item.querySelector('a')
             result = new_feed_object(subtitle, link.href, summary, pub_sec)
             FeedScraperHelper.update(key, link.href)
         endif
