@@ -4,7 +4,13 @@
     <title>Webまんがフィード</title>
     <link>https://github.com/stuncloud/manga_feed</link>
     <description>Webまんがフィードを自力で作っていくやつ</description>
-    <pubDate>Fri, 06 Nov 2026 12:15:12 +0900</pubDate>
+    <pubDate>Tue, 17 Nov 2026 12:15:08 +0900</pubDate>
+    <item>
+      <title>第８話　ダンの希望 (糸と鎧)</title>
+      <link>https://yanmaga.jp/comics/%E7%B3%B8%E3%81%A8%E9%8E%A7/d06dcbfc53b1fe1e3db6d25e3d28cbc1</link>
+      <description><![CDATA[2026/11/17]]></description>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0900</pubDate>
+    </item>
     <item>
       <title>第49話 (ブレイド＆バスタード)</title>
       <link>https://drecomi-plus.jp/series/CD00007/episodes/CD00007-010-084</link>
@@ -16,12 +22,6 @@
       <link>https://www.corocoro.jp/chapter/52961/viewer</link>
       <description><![CDATA[2026/10/30]]></description>
       <pubDate>Fri, 30 Oct 2026 00:00:00 +0900</pubDate>
-    </item>
-    <item>
-      <title>第48話 (ブレイド＆バスタード)</title>
-      <link>https://drecomi-plus.jp/series/CD00007/episodes/CD00007-010-083</link>
-      <description><![CDATA[公開：2026年10月16日（金）/次回更新予定：2026年11月6日(金)]]></description>
-      <pubDate>Fri, 16 Oct 2026 12:00:00 +0900</pubDate>
     </item>
   </channel>
 </rss>
